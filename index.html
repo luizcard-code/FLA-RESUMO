@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Registro de Ocorrência — PF Bauru</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a1a;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+.topbar{background:#1e3a5f;color:#fff;padding:14px 20px;text-align:center;position:sticky;top:0;z-index:10}
+.topbar h1{font-size:15px;font-weight:600;letter-spacing:.3px}
+.topbar-sub{font-size:11px;opacity:.7;margin-top:2px;cursor:default;user-select:none}
+.progress{display:flex;gap:4px;padding:12px 20px;background:#fff;border-bottom:1px solid #e5e7eb}
+.progress-dot{flex:1;height:5px;border-radius:3px;background:#e5e7eb;transition:background .3s}
+.progress-dot.active{background:#2563eb}
+.progress-dot.done{background:#16a34a}
+.container{max-width:480px;margin:0 auto;padding:16px}
+.step-card{display:none;background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:24px 20px;margin-bottom:16px;animation:fadeIn .25s ease}
+.step-card.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-number{font-size:11px;font-weight:600;color:#2563eb;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.step-question{font-size:17px;font-weight:600;margin-bottom:4px;line-height:1.4}
+.step-hint{font-size:12px;color:#888;margin-bottom:14px}
+.option-grid{display:flex;flex-direction:column;gap:8px}
+.option-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid #e5e7eb;border-radius:10px;background:#fff;font-size:15px;font-family:inherit;cursor:pointer;transition:all .15s;text-align:left;-webkit-tap-highlight-color:transparent;user-select:none}
+.option-btn:active{transform:scale(.98)}
+.option-btn.selected{border-color:#2563eb;background:#eff6ff}
+.option-btn .radio{width:22px;height:22px;border-radius:50%;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.option-btn.selected .radio{border-color:#2563eb;background:#2563eb}
+.option-btn.selected .radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
+.option-btn .check{width:22px;height:22px;border-radius:6px;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:14px;color:transparent}
+.option-btn.selected .check{border-color:#2563eb;background:#2563eb;color:#fff}
+.option-btn.selected .check::after{content:'\2713'}
+.section-divider{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px;padding-top:12px;border-top:1px solid #eee}
+.sub-options{margin:8px 0 0 34px;display:none;flex-direction:column;gap:6px}
+.sub-options.open{display:flex}
+.sub-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;cursor:pointer;background:#fff;font-family:inherit;text-align:left;-webkit-tap-highlight-color:transparent}
+.sub-opt:active{transform:scale(.98)}
+.sub-opt.selected{border-color:#2563eb;background:#eff6ff}
+.sub-opt .check{width:18px;height:18px;border-radius:4px;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;color:transparent}
+.sub-opt.selected .check{border-color:#2563eb;background:#2563eb;color:#fff}
+.sub-opt.selected .check::after{content:'\2713'}
+.cedula-form{margin:12px 0 0;display:none;padding:16px;background:#f9fafb;border-radius:10px;border:1px solid #eee}
+.cedula-form.open{display:block}
+.cedula-form h4{font-size:13px;font-weight:600;margin-bottom:10px;color:#555}
+.cedula-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px;flex-wrap:wrap}
+.cedula-row select,.cedula-row input{padding:9px 10px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit}
+.cedula-row select{width:90px}
+.cedula-row input[type=number]{width:60px}
+.cedula-row input[type=text]{flex:1;min-width:120px}
+.cedula-list{margin-top:8px}
+.cedula-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#fff;border:1px solid #eee;border-radius:6px;margin-bottom:4px;font-size:13px}
+.cedula-item button{background:none;border:none;color:#dc2626;font-size:18px;cursor:pointer;padding:0 4px}
+.btn-add-cedula{width:100%;padding:10px;border:1.5px dashed #d1d5db;border-radius:8px;background:none;font-size:13px;font-weight:500;color:#2563eb;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn-add-cedula:active{background:#eff6ff}
+.input-group{margin-bottom:14px}
+.input-group label{font-size:13px;font-weight:500;color:#555;display:block;margin-bottom:5px}
+.input-group input,.input-group textarea{width:100%;padding:12px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;font-family:inherit;-webkit-appearance:none;transition:border-color .2s}
+.input-group input:focus,.input-group textarea:focus{outline:none;border-color:#2563eb}
+.input-group textarea{resize:vertical;min-height:100px}
+.input-hint{font-size:12px;color:#999;margin-top:4px}
+.nav-row{display:flex;gap:10px;margin-top:20px}
+.btn-nav{flex:1;padding:14px;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn-nav:active{transform:scale(.98)}
+.btn-back{background:#f3f4f6;color:#555}
+.btn-next{background:#2563eb;color:#fff}
+.btn-next:disabled,.btn-generate:disabled{opacity:.5;cursor:not-allowed}
+.btn-generate{background:#16a34a;color:#fff}
+.result-card{display:none;background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:24px 20px;margin-bottom:16px}
+.result-card.active{display:block}
+.result-label{font-size:12px;font-weight:600;color:#16a34a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.result-box{background:#f9fafb;border:1px solid #eee;border-radius:10px;padding:16px;font-size:14px;line-height:1.8;white-space:pre-wrap;word-wrap:break-word}
+.result-actions{display:flex;gap:8px;margin-top:16px}
+.btn-action{flex:1;padding:14px;border:2px solid #e5e7eb;border-radius:10px;background:#fff;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;text-align:center}
+.btn-action:active{transform:scale(.98)}
+.btn-copy{border-color:#2563eb;color:#2563eb}
+.btn-new{border-color:#d1d5db;color:#555}
+.feedback{text-align:center;font-size:13px;margin-top:8px;min-height:20px;font-weight:500}
+.fb-ok{color:#16a34a}.fb-err{color:#dc2626}.fb-loading{color:#2563eb}
+.spinner{display:inline-block;width:16px;height:16px;border:2.5px solid #93c5fd;border-top-color:#2563eb;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:14px;width:100%;max-width:380px;padding:28px 24px;text-align:center}
+.modal-box h2{font-size:17px;font-weight:600;margin-bottom:6px}
+.modal-box p{font-size:13px;color:#888;margin-bottom:20px}
+.modal-box input{width:100%;padding:14px;border:2px solid #e5e7eb;border-radius:10px;font-size:20px;text-align:center;letter-spacing:6px;font-weight:700;font-family:inherit}
+.modal-box input:focus{outline:none;border-color:#2563eb}
+.modal-box .btn-nav{margin-top:16px;width:100%}
+.modal-box .fb{font-size:13px;margin-top:8px;min-height:20px}
+.dest-auto-msg{margin-top:12px;padding:12px 14px;background:#eff6ff;border-radius:8px;font-size:13px;color:#1e3a5f;line-height:1.5}
+.motivo-detail{margin-top:10px;display:none}
+.motivo-detail.open{display:block}
+.version-tag{text-align:center;font-size:10px;color:#ccc;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="topbar"><h1>REGISTRO DE OCORRÊNCIA</h1><div class="topbar-sub" id="topSub">Polícia Federal — Bauru/SP</div></div>
+<div class="progress" id="progress"></div>
+<div class="container">
+
+<!-- STEP 1: FORÇA -->
+<div class="step-card" id="step1">
+<div class="step-number">Passo 1 de 8</div>
+<div class="step-question">Qual a força policial?</div>
+<div class="step-hint">Selecione uma opção</div>
+<div class="option-grid" id="forcaOpts">
+<button class="option-btn" data-val="Polícia Militar - Equipe TOR"><span class="radio"></span>PM — Equipe TOR</button>
+<button class="option-btn" data-val="Polícia Militar - BAEP"><span class="radio"></span>PM — BAEP</button>
+<button class="option-btn" data-val="Polícia Militar - Força Tática"><span class="radio"></span>PM — Força Tática</button>
+<button class="option-btn" data-val="Polícia Militar - ROCAM"><span class="radio"></span>PM — ROCAM</button>
+<button class="option-btn" data-val="Polícia Militar"><span class="radio"></span>PM — Outra equipe</button>
+<button class="option-btn" data-val="Polícia Rodoviária Federal"><span class="radio"></span>PRF</button>
+<button class="option-btn" data-val="Polícia Rodoviária Estadual"><span class="radio"></span>Pol. Rod. Estadual</button>
+<button class="option-btn" data-val="Receita Federal do Brasil"><span class="radio"></span>Receita Federal</button>
+</div>
+<div class="nav-row"><div style="flex:1"></div><button class="btn-nav btn-next" id="next1">Próximo</button></div>
+</div>
+
+<!-- STEP 2: MOTIVO -->
+<div class="step-card" id="step2">
+<div class="step-number">Passo 2 de 8</div>
+<div class="step-question">Motivo da abordagem</div>
+<div class="step-hint">Selecione um ou mais motivos (fundada suspeita)</div>
+<div class="option-grid" id="motivoOpts">
+<button class="option-btn multi" data-val="patrulhamento/operação de rotina"><span class="check"></span>Patrulhamento / operação de rotina</button>
+<button class="option-btn multi" data-val="tentativa de evasão/fuga ao avistar a viatura"><span class="check"></span>Tentativa de evasão / fuga ao avistar viatura</button>
+<button class="option-btn multi" data-val="denúncia anônima com dados específicos"><span class="check"></span>Denúncia anônima com dados específicos</button>
+<button class="option-btn multi" data-val="informação de inteligência policial/investigação prévia"><span class="check"></span>Informação de inteligência / investigação prévia</button>
+<button class="option-btn multi" data-val="direção errática/manobras suspeitas"><span class="check"></span>Direção errática / manobras suspeitas</button>
+<button class="option-btn multi" data-val="incompatibilidade visível entre veículo e carga"><span class="check"></span>Incompatibilidade veículo/carga visível</button>
+<button class="option-btn multi" data-val="operação/fiscalização programada"><span class="check"></span>Operação / fiscalização programada</button>
+<button class="option-btn multi" data-val="veículo com restrição no sistema (furto/roubo/alerta)"><span class="check"></span>Veículo com restrição no sistema</button>
+<button class="option-btn multi" data-val="nervosismo ostensivo dos ocupantes"><span class="check"></span>Nervosismo ostensivo dos ocupantes</button>
+</div>
+<div class="motivo-detail" id="motivoDetail">
+<div class="input-group" style="margin-top:12px"><label>Detalhe adicional (opcional)</label><input type="text" id="motivoDetalhe" placeholder="Ex: placa informada na denúncia..."></div>
+</div>
+<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(1)">Voltar</button><button class="btn-nav btn-next" id="next2">Próximo</button></div>
+</div>
+
+<!-- STEP 3: LOCAL -->
+<div class="step-card" id="step3">
+<div class="step-number">Passo 3 de 8</div>
+<div class="step-question">Onde foi a abordagem?</div>
+<div class="step-hint">Preencha os três campos</div>
+<div class="input-group"><label>KM (aproximado)</label><input type="text" id="km" placeholder="Ex: 354" inputmode="numeric"></div>
+<div class="input-group"><label>Rodovia</label><input type="text" id="rodovia" placeholder="Ex: SP-294 ou BR-153"></div>
+<div class="input-group"><label>Município</label><input type="text" id="municipio" placeholder="Ex: Bauru/SP"></div>
+<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(2)">Voltar</button><button class="btn-nav btn-next" id="next3">Próximo</button></div>
+</div>
+
+<!-- STEP 4: PLACA -->
+<div class="step-card" id="step4">
+<div class="step-number">Passo 4 de 8</div>
+<div class="step-question">Placa do veículo</div>
+<div class="step-hint">Formato Mercosul ou antigo</div>
+<div class="input-group"><input type="text" id="placa" placeholder="ABC1D23" maxlength="7" style="text-transform:uppercase;font-size:24px;text-align:center;letter-spacing:4px;font-weight:700"></div>
+<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(3)">Voltar</button><button class="btn-nav btn-next" id="next4">Próximo</button></div>
+</div>
+
+<!-- STEP 5: MATERIAL -->
+<div class="step-card" id="step5">
+<div class="step-number">Passo 5 de 8</div>
+<div class="step-question">O que foi apreendido?</div>
+<div class="step-hint">Selecione uma ou mais opções</div>
+<div class="section-divider">Mercadorias</div>
+<div class="option-grid" id="mercOpts">
+<button class="option-btn multi" data-cat="merc" data-val="diversos equipamentos eletrônicos"><span class="check"></span>Eletrônicos</button>
+<button class="option-btn multi" data-cat="merc" data-val="cigarros de origem estrangeira"><span class="check"></span>Cigarros</button>
+<button class="option-btn multi" data-cat="merc" data-val="medicamentos de origem estrangeira"><span class="check"></span>Medicamentos</button>
+<button class="option-btn multi" data-cat="merc" data-val="agrotóxicos de origem estrangeira"><span class="check"></span>Agrotóxicos</button>
+<button class="option-btn multi" data-cat="merc" data-val="pneus de origem estrangeira"><span class="check"></span>Pneus</button>
+<button class="option-btn multi" data-cat="merc" data-val="mercadorias diversas de origem estrangeira"><span class="check"></span>Mercadorias diversas</button>
+</div>
+<div class="section-divider">Drogas</div>
+<div class="option-grid"><button class="option-btn multi" id="btnDrogas"><span class="check"></span>Drogas / Substâncias ilícitas</button></div>
+<div class="sub-options" id="subDrogas">
+<button class="sub-opt" data-val="maconha"><span class="check"></span>Maconha</button>
+<button class="sub-opt" data-val="cocaína"><span class="check"></span>Cocaína</button>
+<button class="sub-opt" data-val="crack"><span class="check"></span>Crack</button>
+<button class="sub-opt" data-val="outra substância"><span class="check"></span>Outra substância</button>
+</div>
+<div class="section-divider">Moeda falsa</div>
+<div class="option-grid"><button class="option-btn multi" id="btnCedulas"><span class="check"></span>Cédulas falsas de Real</button></div>
+<div class="cedula-form" id="cedulaForm">
+<h4>Informar cédulas apreendidas</h4>
+<div class="cedula-row">
+<select id="cedDenom"><option value="2">R$2</option><option value="5">R$5</option><option value="10">R$10</option><option value="20">R$20</option><option value="50" selected>R$50</option><option value="100">R$100</option><option value="200">R$200</option></select>
+<input type="number" id="cedQtd" min="1" value="1" placeholder="Qtd">
+<input type="text" id="cedSerie" placeholder="Nº série (opcional)">
+</div>
+<button class="btn-add-cedula" id="btnAddCed">+ Adicionar</button>
+<div class="cedula-list" id="cedList"></div>
+</div>
+<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(4)">Voltar</button><button class="btn-nav btn-next" id="next5">Próximo</button></div>
+</div>
+
+<!-- STEP 6: IRREGULARIDADE -->
+<div class="step-card" id="step6">
+<div class="step-number">Passo 6 de 8</div>
+<div class="step-question">Qual a irregularidade?</div>
+<div class="step-hint">Selecione uma opção</div>
+<div class="option-grid" id="irregOpts">
+<button class="option-btn" data-val="sem apresentação de nota fiscal"><span class="radio"></span>Sem nota fiscal</button>
+<button class="option-btn" data-val="sem documentação comprobatória de regular importação"><span class="radio"></span>Sem doc. de importação</button>
+<button class="option-btn" data-val="sem comprovação de origem lícita"><span class="radio"></span>Sem comprovação de origem</button>
+</div>
+<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(5)">Voltar</button><button class="btn-nav btn-next" id="next6">Próximo</button></div>
+</div>
+
+<!-- STEP 7: DESTINO -->
+<div class="step-card" id="step7">
+<div class="step-number">Passo 7 de 8</div>
+<div class="step-question">Destino das mercadorias e veículo?</div>
+<div class="step-hint" id="destHint">Selecione uma opção</div>
+<div class="dest-auto-msg" id="destAuto" style="display:none"></div>
+<div class="option-grid" id="destOpts">
+<button class="option-btn" data-val="rfb_direto"><span class="radio"></span>Entregar direto na RFB<br><small style="color:#888;font-size:12px">Caso mais comum</small></button>
+<button class="option-btn" data-val="pf_primeiro"><span class="radio"></span>Apresentar na PF primeiro<br><small style="color:#888;font-size:12px">Encaminhar à RFB no dia seguinte</small></button>
+</div>
+<div class="nav-row"><button class="btn-nav btn-back" id="back7">Voltar</button><button class="btn-nav btn-next" id="next7">Próximo</button></div>
+</div>
+
+<!-- STEP 8: OBSERVAÇÕES -->
+<div class="step-card" id="step8">
+<div class="step-number">Passo 8 de 8</div>
+<div class="step-question">Alguma observação?</div>
+<div class="step-hint">Opcional — se preenchido, será incorporado ao resumo pela IA</div>
+<div class="input-group"><textarea id="observacoes" placeholder="Ex: mercadoria oculta no assoalho, condutor apresentou NF vencida, veículo com fundo falso, tentativa de fuga, motorista embriagado..."></textarea></div>
+<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(7)">Voltar</button><button class="btn-nav btn-generate" id="btnGerar">Gerar Resumo</button></div>
+</div>
+
+<!-- RESULTADO -->
+<div class="result-card" id="resultCard">
+<div class="result-label">Resumo gerado</div>
+<div class="result-box" id="resultado"></div>
+<div class="feedback" id="feedback"></div>
+<div class="result-actions">
+<button class="btn-action btn-copy" id="btnCopiar">Copiar texto</button>
+<button class="btn-action btn-new" id="btnNovo">Nova ocorrência</button>
+</div>
+</div>
+<div class="version-tag">v1.0 — PF Bauru</div>
+</div>
+
+<!-- MODAL SENHA -->
+<div class="modal-overlay" id="pwOverlay">
+<div class="modal-box">
+<h2>Acesso protegido</h2>
+<p>Digite a senha para gerar o resumo com IA</p>
+<input type="password" id="pwInput" placeholder="----" maxlength="10" inputmode="numeric">
+<button class="btn-nav btn-next" id="pwSubmit" style="margin-top:16px;width:100%">Entrar</button>
+<div class="fb" id="pwFb" style="font-size:13px;margin-top:8px;min-height:20px"></div>
+</div>
+</div>
+
+<!-- MODAL ADMIN (segredo) -->
+<div class="modal-overlay" id="adminOverlay">
+<div class="modal-box">
+<h2>Chave API (admin)</h2>
+<p style="font-family:monospace;font-size:13px;word-break:break-all;background:#f9fafb;padding:12px;border-radius:8px;margin-bottom:12px" id="adminKeyDisplay">—</p>
+<button class="btn-nav btn-back" onclick="el('adminOverlay').classList.remove('open')" style="width:100%">Fechar</button>
+</div>
+</div>
+
+<script>
+// ============================================================
+// CHAVE CRIPTOGRAFADA — COLE A STRING DO ENCRIPTADOR AQUI
+// ============================================================
+var EK='COLE_AQUI';
+// ============================================================
+
+var TOTAL=8,cur=1,decryptedKey='';
+function el(id){return document.getElementById(id);}
+function v(id){return el(id).value.trim();}
+var D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
+
+// ===== CRYPTO =====
+function hex2buf(h){var a=[];for(var i=0;i<h.length;i+=2)a.push(parseInt(h.substr(i,2),16));return new Uint8Array(a);}
+async function deriveKey(pw,salt){var enc=new TextEncoder();var km=await crypto.subtle.importKey('raw',enc.encode(pw),{name:'PBKDF2'},false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);}
+async function decryptKey(pw){
+  if(EK==='COLE_AQUI')return '';
+  var parts=EK.split(':');if(parts.length!==3)return '';
+  var salt=hex2buf(parts[0]),iv=hex2buf(parts[1]),data=hex2buf(parts[2]);
+  try{var key=await deriveKey(pw,salt);var dec=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,data);return new TextDecoder().decode(dec);}catch(e){return '';}
+}
+
+// ===== PASSWORD MODAL =====
+function showPwModal(cb){
+  el('pwInput').value='';el('pwFb').textContent='';
+  el('pwOverlay').classList.add('open');
+  el('pwInput').focus();
+  el('pwSubmit').onclick=async function(){
+    var pw=el('pwInput').value.trim();
+    if(!pw){el('pwFb').textContent='Digite a senha.';el('pwFb').style.color='#dc2626';return;}
+    el('pwFb').textContent='Verificando...';el('pwFb').style.color='#2563eb';
+    var k=await decryptKey(pw);
+    if(k){decryptedKey=k;el('pwOverlay').classList.remove('open');cb();}
+    else{el('pwFb').textContent='Senha incorreta.';el('pwFb').style.color='#dc2626';el('pwInput').value='';el('pwInput').focus();}
+  };
+  el('pwInput').onkeydown=function(e){if(e.key==='Enter')el('pwSubmit').click();};
+}
+
+// ===== ADMIN SECRET: 5 taps no subtítulo =====
+var adminTaps=0,adminTimer=null;
+el('topSub').addEventListener('click',function(){
+  adminTaps++;
+  clearTimeout(adminTimer);
+  adminTimer=setTimeout(function(){adminTaps=0;},2000);
+  if(adminTaps>=5){
+    adminTaps=0;
+    if(decryptedKey){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');}
+    else{
+      showPwModal(function(){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');});
+    }
+  }
+});
+
+// ===== PROGRESS =====
+function renderProg(){var h='';for(var i=1;i<=TOTAL;i++){var c='progress-dot';if(i<cur)c+=' done';else if(i===cur)c+=' active';h+='<div class="'+c+'"></div>';}el('progress').innerHTML=h;}
+
+// ===== NAV =====
+function goStep(n){cur=n;for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.toggle('active',i===n);}el('resultCard').classList.remove('active');renderProg();window.scrollTo({top:0,behavior:'smooth'});if(n===7)updateDest();}
+function showResult(){for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.remove('active');}el('resultCard').classList.add('active');document.querySelectorAll('.progress-dot').forEach(function(d){d.classList.add('done');d.classList.remove('active');});}
+
+function shake(b){b.style.animation='none';b.offsetHeight;b.style.animation='shakeX .4s ease';setTimeout(function(){b.style.animation='';},500);}
+var ss=document.createElement('style');ss.textContent='@keyframes shakeX{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';document.head.appendChild(ss);
+
+// ===== STEP LOGIC =====
+(function(){var bs=el('forcaOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.forca=b.dataset.val;});});})();
+
+(function(){var bs=el('motivoOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('selected');D.motivos=[];bs.forEach(function(x){if(x.classList.contains('selected'))D.motivos.push(x.dataset.val);});el('motivoDetail').classList.toggle('open',D.motivos.length>0);});});})();
+
+el('placa').addEventListener('input',function(){this.value=this.value.toUpperCase();});
+
+var mercBtns=document.querySelectorAll('#mercOpts .option-btn');
+mercBtns.forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('selected');D.mercs=[];mercBtns.forEach(function(x){if(x.classList.contains('selected'))D.mercs.push(x.dataset.val);});});});
+
+el('btnDrogas').addEventListener('click',function(){this.classList.toggle('selected');var o=this.classList.contains('selected');el('subDrogas').classList.toggle('open',o);if(!o){D.drogas=[];el('subDrogas').querySelectorAll('.sub-opt').forEach(function(s){s.classList.remove('selected');});}});
+el('subDrogas').querySelectorAll('.sub-opt').forEach(function(s){s.addEventListener('click',function(){s.classList.toggle('selected');D.drogas=[];el('subDrogas').querySelectorAll('.sub-opt.selected').forEach(function(x){D.drogas.push(x.dataset.val);});});});
+
+el('btnCedulas').addEventListener('click',function(){this.classList.toggle('selected');el('cedulaForm').classList.toggle('open',this.classList.contains('selected'));if(!this.classList.contains('selected')){D.cedulas=[];renderCed();}});
+el('btnAddCed').addEventListener('click',function(){var den=el('cedDenom').value,qtd=parseInt(el('cedQtd').value)||1,ser=el('cedSerie').value.trim();D.cedulas.push({d:den,q:qtd,s:ser});el('cedQtd').value='1';el('cedSerie').value='';renderCed();});
+function renderCed(){var c=el('cedList');if(!D.cedulas.length){c.innerHTML='';return;}var h='';D.cedulas.forEach(function(cd,i){h+='<div class="cedula-item"><span>'+cd.q+'x R$'+cd.d+(cd.s?' — Série: '+cd.s:'')+'</span><button onclick="remCed('+i+')">&times;</button></div>';});c.innerHTML=h;}
+function remCed(i){D.cedulas.splice(i,1);renderCed();}
+
+(function(){var bs=el('irregOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.irregularidade=b.dataset.val;});});})();
+
+function hasMerc(){return D.mercs.length>0;}
+function hasPF(){return D.drogas.length>0||D.cedulas.length>0;}
+function onlyPF(){return !hasMerc()&&hasPF();}
+function updateDest(){
+  if(onlyPF()){el('destAuto').style.display='block';el('destAuto').textContent='Drogas e/ou cédulas falsas são apresentadas diretamente na PF. Destino definido automaticamente.';el('destOpts').style.display='none';el('destHint').style.display='none';D.destino='pf_direto';}
+  else{el('destAuto').style.display='none';el('destOpts').style.display='flex';el('destHint').style.display='block';D.destino='';el('destOpts').querySelectorAll('.option-btn').forEach(function(b){b.classList.remove('selected');});}
+}
+(function(){var bs=el('destOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.destMerc=b.dataset.val;D.destino=b.dataset.val;});});})();
+el('back7').addEventListener('click',function(){goStep(hasMerc()?6:5);});
+
+el('next1').addEventListener('click',function(){if(!D.forca){shake(this);return;}goStep(2);});
+el('next2').addEventListener('click',function(){if(!D.motivos.length){shake(this);return;}D.motivoDetalhe=v('motivoDetalhe');goStep(3);});
+el('next3').addEventListener('click',function(){D.km=v('km');D.rodovia=v('rodovia');D.municipio=v('municipio');if(!D.km||!D.rodovia||!D.municipio){shake(this);return;}goStep(4);});
+el('next4').addEventListener('click',function(){D.placa=v('placa').toUpperCase();if(!D.placa){shake(this);return;}goStep(5);});
+el('next5').addEventListener('click',function(){if(!D.mercs.length&&!D.drogas.length&&!D.cedulas.length){shake(this);return;}if(!hasMerc()){D.irregularidade='';goStep(7);return;}goStep(6);});
+el('next6').addEventListener('click',function(){if(!D.irregularidade){shake(this);return;}goStep(7);});
+el('next7').addEventListener('click',function(){if(!D.destino){shake(this);return;}goStep(8);});
+
+// ===== BUILD DATA =====
+function buildData(){
+  var s={forca:D.forca,motivos_abordagem:D.motivos};
+  if(D.motivoDetalhe)s.detalhe_motivo=D.motivoDetalhe;
+  s.local='KM '+D.km+', rodovia '+D.rodovia+', município '+D.municipio;s.placa=D.placa;
+  if(D.mercs.length)s.mercadorias=D.mercs.join(', ');
+  if(D.irregularidade)s.irregularidade=D.irregularidade;
+  if(D.drogas.length)s.drogas=D.drogas.map(function(d){return 'substância com características de '+d;}).join('; ');
+  if(D.cedulas.length){
+    s.cedulas_detalhamento=D.cedulas.map(function(c){var t=c.q+' cédula(s) de R$ '+c.d+',00';if(c.s)t+=', número de série: '+c.s;return t;}).join('; ');
+    var tot=D.cedulas.reduce(function(a,c){return a+c.q;},0);var val=D.cedulas.reduce(function(a,c){return a+c.q*parseInt(c.d);},0);
+    s.cedulas_resumo=tot+' cédula(s) falsas com valor de face total de R$ '+val.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  }
+  var RFB='Depósito da Receita Federal - Bauru/SP, Rua Halim Aidar, Quadra 4, s/n - Vila Industrial, Bauru – SP, (14) 3042-9892';
+  if(hasMerc()&&hasPF()){s.destino_mercadorias=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';s.destino_drogas_cedulas='Drogas e/ou cédulas falsas apresentadas diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
+  else if(onlyPF()){s.destino='Material apreendido apresentado diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
+  else{s.destino=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';}
+  if(D.observacoes)s.observacoes=D.observacoes;
+  return s;
+}
+
+function buildFallback(){
+  var s=buildData(),parts=[];
+  var motivoTxt=s.motivos_abordagem.join(', ');if(s.detalhe_motivo)motivoTxt+=' ('+s.detalhe_motivo+')';
+  var p='Trata-se de ocorrência apresentada pela '+s.forca+', a qual relata que durante '+motivoTxt+', próximo ao '+s.local+', foi dado sinal regulamentar de parada obrigatória ao veículo placa '+s.placa+', sendo que, após abordagem, foi identificado no interior do referido veículo';
+  var itens=[];
+  if(s.mercadorias)itens.push(s.mercadorias+(s.irregularidade?', '+s.irregularidade:''));
+  if(s.drogas)itens.push(s.drogas);
+  if(s.cedulas_detalhamento)itens.push(s.cedulas_resumo+' ('+s.cedulas_detalhamento+')');
+  p+=': '+itens.join('; ')+'.';
+  if(s.mercadorias)p+=' Pelos fatos, apresentaram o veículo e mercadorias à RFB de Bauru/SP, os quais serão devidamente contabilizados e verificados quanto a efetiva procedência e os valores, incluindo-se os tributos, sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis.';
+  parts.push(p);
+  if(s.destino_mercadorias){parts.push(s.destino_mercadorias);parts.push(s.destino_drogas_cedulas);}
+  else if(s.destino)parts.push(s.destino);
+  if(s.observacoes)parts.push('Observações: '+s.observacoes);
+  return parts.join('\n\n');
+}
+
+// ===== GERAR =====
+async function executarGeracao(){
+  D.observacoes=v('observacoes');
+  var btn=el('btnGerar');btn.disabled=true;
+  showResult();
+  var res=el('resultado'),fb=el('feedback'),sd=buildData();
+  if(decryptedKey){
+    res.textContent='';fb.innerHTML='<span class="spinner"></span> Gerando resumo com IA...';fb.className='feedback fb-loading';
+    var prompt='Você é um escrivão da Polícia Federal de Bauru/SP redigindo o resumo de um auto de prisão em flagrante.\n\n';
+    prompt+='REGRAS OBRIGATÓRIAS:\n';
+    prompt+='1. Use SOMENTE os dados fornecidos no JSON abaixo. NÃO invente, deduza ou acrescente NENHUMA informação que não conste nos dados.\n';
+    prompt+='2. NÃO corrija dados factuais (nomes, números, valores, placas, séries). Você pode apenas melhorar a REDAÇÃO e o encadeamento do texto.\n';
+    prompt+='3. Use os "motivos_abordagem" para contextualizar a fundada suspeita de forma natural e jurídica no início do resumo, sem copiar ipsis litteris — reescreva com linguagem formal.\n';
+    prompt+='4. Se houver "detalhe_motivo", incorpore-o naturalmente ao contexto da abordagem.\n';
+    prompt+='5. Para drogas, use SEMPRE "substância com características de [nome]".\n';
+    prompt+='6. Para cédulas falsas, mencione EXATAMENTE quantidade, denominação, valor de face e séries informados.\n';
+    prompt+='7. Para mercadorias de descaminho/contrabando, mencione contabilização e verificação pela RFB quanto à procedência e tributos.\n';
+    prompt+='8. Tom formal e jurídico. Organize em parágrafos: fatos (incluindo motivo da abordagem), destino do material, observações (se houver).\n';
+    prompt+='9. Se houver "observacoes", incorpore-as de forma coesa e natural no texto — NÃO como item separado.\n';
+    prompt+='10. SEMPRE inicie o resumo com "Trata-se de ocorrência apresentada pela [força policial]..." — este é o padrão formal obrigatório.\n';
+    prompt+='11. SEMPRE encerre o primeiro parágrafo com: "...sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis." NÃO tipifique o crime — isso é atribuição exclusiva do Delegado.\n';
+    prompt+='12. Retorne APENAS o texto do resumo. Sem títulos, explicações, markdown ou comentários.\n\n';
+    prompt+='DADOS DA OCORRÊNCIA (JSON):\n'+JSON.stringify(sd,null,2);
+    try{
+      var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',{
+        method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':decryptedKey},
+        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.15}})
+      });
+      if(!resp.ok)throw new Error('HTTP '+resp.status);
+      var json=await resp.json();
+      var txt=json&&json.candidates&&json.candidates[0]&&json.candidates[0].content&&json.candidates[0].content.parts&&json.candidates[0].content.parts[0]&&json.candidates[0].content.parts[0].text;
+      if(!txt)throw new Error('Resposta vazia do Gemini');
+      res.textContent=txt.trim();fb.textContent='Resumo gerado por IA';fb.className='feedback fb-ok';
+    }catch(err){
+      res.textContent=buildFallback();fb.textContent='Erro: '+err.message+'. Resumo padrão exibido.';fb.className='feedback fb-err';
+    }
+  }else{
+    res.textContent=buildFallback();fb.textContent='Resumo padrão (sem IA).';fb.className='feedback fb-err';
+  }
+  btn.disabled=false;
+}
+
+el('btnGerar').addEventListener('click',function(){
+  D.observacoes=v('observacoes');
+  if(EK==='COLE_AQUI'){executarGeracao();return;}
+  if(decryptedKey){executarGeracao();return;}
+  showPwModal(function(){executarGeracao();});
+});
+
+el('btnCopiar').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;navigator.clipboard.writeText(t).then(function(){el('feedback').textContent='Copiado!';el('feedback').className='feedback fb-ok';setTimeout(function(){el('feedback').textContent='';},2000);});});
+
+el('btnNovo').addEventListener('click',function(){
+  D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
+  ['km','rodovia','municipio','placa','observacoes','motivoDetalhe'].forEach(function(id){el(id).value='';});
+  document.querySelectorAll('.option-btn.selected,.sub-opt.selected').forEach(function(b){b.classList.remove('selected');});
+  el('subDrogas').classList.remove('open');el('cedulaForm').classList.remove('open');el('cedList').innerHTML='';
+  el('motivoDetail').classList.remove('open');
+  el('resultado').textContent='';el('feedback').textContent='';
+  goStep(1);
+});
+
+goStep(1);
+</script>
+</body>
+</html>
