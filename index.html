@@ -446,6 +446,7 @@ el('voiceText').textContent='Ouvindo...';
 el('voiceText').classList.add('listening');
 el('voiceActions').style.display='none';
 el('voiceFeedback').textContent='';
+el('btnVoiceInsert').textContent='Inserir';el('btnVoiceReview').style.display='';
 try{recognition.start();}catch(e){}
 }
 
@@ -505,7 +506,7 @@ prompt+='NÃO altere fatos, nomes, números, placas ou informações substantiva
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 if(Object.keys(ctx).length)prompt+='CONTEXTO DA OCORRÊNCIA:\n'+JSON.stringify(ctx,null,2)+'\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceText').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';}
+try{var revised=await callGemini(prompt);el('voiceText').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsert').textContent='Inserir revisado';el('btnVoiceReview').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
@@ -648,7 +649,10 @@ btn.disabled=false;
 
 el('btnAccept').addEventListener('click',function(){el('revisionArea').style.display='none';el('finalActions').style.display='flex';el('feedback').textContent='Versão final aceita.';el('feedback').className='feedback fb-ok';el('resultLabel').textContent='Versão final';});
 el('btnSendRevision').addEventListener('click',function(){if(!decryptedKey){showPwModal(function(){enviarRevisao();});}else{enviarRevisao();}});
-el('btnGerar').addEventListener('click',function(){D.observacoes=v('observacoes');if(EK==='COLE_AQUI'){executarGeracao();return;}if(decryptedKey){executarGeracao();return;}showPwModal(function(){executarGeracao();});});
+el('btnGerar').addEventListener('click',function(){
+// Auto-insert pending voice text
+if(el('voicePreview').classList.contains('open')){var vt=el('voiceText').textContent.trim();if(vt&&vt!=='Ouvindo...'){var obs=el('observacoes');obs.value=obs.value?(obs.value.trim()+'\n'+vt):vt;el('voicePreview').classList.remove('open');}}
+D.observacoes=v('observacoes');if(EK==='COLE_AQUI'){executarGeracao();return;}if(decryptedKey){executarGeracao();return;}showPwModal(function(){executarGeracao();});});
 el('editGerar').addEventListener('click',function(){var orig=v('editResumoOriginal'),instr=v('editInstrucao');if(!orig||!instr){shake(this);return;}if(EK==='COLE_AQUI'){executarEdicao();return;}if(decryptedKey){executarEdicao();return;}showPwModal(function(){executarEdicao();});});
 el('btnCopiar').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;navigator.clipboard.writeText(t).then(function(){el('feedback').textContent='Copiado!';el('feedback').className='feedback fb-ok';setTimeout(function(){el('feedback').textContent='';},2000);});});
 
