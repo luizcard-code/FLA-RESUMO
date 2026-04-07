@@ -490,11 +490,20 @@ async function reviewVoice(txt){
 var fb=el('voiceFeedback'),btn=el('btnVoiceReview');
 btn.disabled=true;
 fb.innerHTML='<span class="spinner"></span> Revisando...';fb.style.color='#2563eb';
-var prompt='Você é assistente de um escrivão da Polícia Federal.\n';
+var ctx={};
+if(D.forca)ctx.forca=D.forca;
+if(D.placa)ctx.placa=D.placa;
+if(D.km)ctx.local='KM '+D.km+', '+D.rodovia+', '+D.municipio;
+if(D.mercs.length)ctx.mercadorias=D.mercs;
+if(D.drogas.length)ctx.drogas=D.drogas;
+if(D.cedulas.length)ctx.cedulas=D.cedulas.length+' cédula(s)';
+var prompt='Você é assistente de um escrivão da Polícia Federal de Bauru/SP.\n';
 prompt+='Revise o texto abaixo, que foi ditado por voz por um policial durante registro de ocorrência.\n';
 prompt+='Corrija gramática, pontuação e torne a linguagem mais formal e coesa.\n';
-prompt+='NÃO altere fatos, nomes, números, placas ou informações substantivas.\n';
+prompt+='Use o CONTEXTO DA OCORRÊNCIA para entender referências e corrigir possíveis erros de transcrição (nomes de cidades, rodovias, placas).\n';
+prompt+='NÃO altere fatos, nomes, números, placas ou informações substantivas que estejam corretos.\n';
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
+if(Object.keys(ctx).length)prompt+='CONTEXTO DA OCORRÊNCIA:\n'+JSON.stringify(ctx,null,2)+'\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
 try{var revised=await callGemini(prompt);el('voiceText').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
