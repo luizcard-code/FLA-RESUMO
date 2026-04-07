@@ -298,11 +298,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="result-box" id="resultado"></div>
 <div class="feedback" id="feedback"></div>
 <div class="revision-area" id="revisionArea">
-  <label>Retificação / Complemento</label>
-  <textarea id="revisionText" placeholder="Ex: corrigir a placa para XYZ9A99, acrescentar que o condutor tentou fuga a pé..."></textarea>
-  <div class="revision-actions">
+  <div class="obs-header">
+    <label>Retificação / Complemento</label>
+    <button class="btn-mic" id="btnMicRev"><span class="mic-icon">🎤</span> <span id="micLabelRev">Ditar</span></button>
+  </div>
+  <textarea id="revisionText" placeholder="Digite ou dite a retificação. Ex: corrigir a placa para XYZ9A99, acrescentar que o condutor tentou fuga a pé..."></textarea>
+  <div class="voice-no-support" id="voiceNoSupportRev" style="display:none">Seu navegador não suporta ditado por voz. Use o campo de texto acima.</div>
+  <div class="voice-preview" id="voicePreviewRev">
+    <div class="voice-preview-label">Transcrição</div>
+    <div class="voice-preview-text" id="voiceTextRev">Ouvindo...</div>
+    <div class="voice-actions" id="voiceActionsRev" style="display:none">
+      <button class="btn-voice btn-voice-insert" id="btnVoiceInsertRev">Inserir</button>
+      <button class="btn-voice btn-voice-review" id="btnVoiceReviewRev">Revisar áudio com IA</button>
+      <button class="btn-voice btn-voice-discard" id="btnVoiceDiscardRev">Descartar</button>
+    </div>
+    <div class="voice-feedback" id="voiceFeedbackRev"></div>
+  </div>
+  <div class="revision-actions" style="margin-top:12px">
     <button class="btn-revise btn-accept" id="btnAccept">Aceitar versão</button>
-    <button class="btn-revise btn-send-revision" id="btnSendRevision">Reenviar à IA</button>
+    <button class="btn-revise btn-send-revision" id="btnSendRevision">Atualizar resumo com IA</button>
   </div>
   <div class="revision-count" id="revisionCount"></div>
 </div>
@@ -313,7 +327,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<div class="version-tag">v2.1 — PF Bauru</div>
+<div class="version-tag">v2.2 — PF Bauru</div>
 </div>
 
 <!-- MODAL SENHA -->
@@ -637,17 +651,64 @@ catch(err){res.textContent=orig;fb.textContent='Erro: '+err.message+'. Texto ori
 btn.disabled=false;
 }
 
-// REVISÃO
+// REVISÃO — VOZ
+var isRecRev=false,shouldRestartRev=false,finalTransRev='',interimTransRev='',recRev=null;
+if(speechSupported){
+recRev=new SpeechRec();recRev.lang='pt-BR';recRev.interimResults=true;recRev.continuous=false;recRev.maxAlternatives=1;
+recRev.onresult=function(e){interimTransRev='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalTransRev+=e.results[i][0].transcript+' ';}else{interimTransRev+=e.results[i][0].transcript;}}var display=finalTransRev+(interimTransRev?' '+interimTransRev:'');el('voiceTextRev').textContent=display||'Ouvindo...';el('voiceTextRev').classList.toggle('listening',!finalTransRev&&!interimTransRev);};
+recRev.onend=function(){if(shouldRestartRev&&isRecRev){try{recRev.start();}catch(e){}return;}stopRecRev(false);};
+recRev.onerror=function(e){if(e.error==='no-speech'&&isRecRev&&shouldRestartRev){try{recRev.start();}catch(ex){}return;}stopRecRev(false);};
+}
+function startRecRev(){if(!speechSupported)return;finalTransRev='';interimTransRev='';isRecRev=true;shouldRestartRev=true;el('btnMicRev').classList.add('recording');el('micLabelRev').textContent='Parar';el('voicePreviewRev').classList.add('open');el('voiceTextRev').textContent='Ouvindo...';el('voiceTextRev').classList.add('listening');el('voiceActionsRev').style.display='none';el('voiceFeedbackRev').textContent='';el('btnVoiceInsertRev').textContent='Inserir';el('btnVoiceReviewRev').style.display='';try{recRev.start();}catch(e){}}
+function stopRecRev(manual){isRecRev=false;shouldRestartRev=false;el('btnMicRev').classList.remove('recording');el('micLabelRev').textContent='Ditar';if(manual){try{recRev.stop();}catch(e){}}var txt=(finalTransRev+interimTransRev).trim();if(txt){el('voiceTextRev').textContent=txt;el('voiceTextRev').classList.remove('listening');el('voiceActionsRev').style.display='flex';}else{el('voicePreviewRev').classList.remove('open');}}
+
+if(!speechSupported){el('btnMicRev').classList.add('unavailable');el('btnMicRev').addEventListener('click',function(){el('voiceNoSupportRev').style.display='block';});}
+else{el('btnMicRev').addEventListener('click',function(){if(isRecRev){stopRecRev(true);}else{startRecRev();}});}
+
+el('btnVoiceInsertRev').addEventListener('click',function(){var txt=el('voiceTextRev').textContent.trim();if(!txt)return;var r=el('revisionText');r.value=r.value?(r.value.trim()+'\n'+txt):txt;el('voicePreviewRev').classList.remove('open');el('voiceFeedbackRev').textContent='';});
+el('btnVoiceDiscardRev').addEventListener('click',function(){el('voicePreviewRev').classList.remove('open');el('voiceFeedbackRev').textContent='';});
+el('btnVoiceReviewRev').addEventListener('click',function(){var txt=el('voiceTextRev').textContent.trim();if(!txt)return;if(!decryptedKey){showPwModal(function(){reviewVoiceRev(txt);});}else{reviewVoiceRev(txt);}});
+
+async function reviewVoiceRev(txt){
+var fb=el('voiceFeedbackRev'),btn=el('btnVoiceReviewRev');btn.disabled=true;
+fb.innerHTML='<span class="spinner"></span> Revisando áudio...';fb.style.color='#2563eb';
+var ctx={resumo_atual:el('resultado').textContent.substring(0,300)+'...'};
+var prompt='Você é assistente de um escrivão da Polícia Federal de Bauru/SP.\n';
+prompt+='Revise o texto abaixo, que foi ditado por voz por um policial como retificação/complemento de um resumo de ocorrência.\n';
+prompt+='Corrija gramática, pontuação e torne a linguagem mais clara e coesa.\n';
+prompt+='NÃO altere fatos, nomes, números, placas ou informações substantivas.\n';
+prompt+='Este texto é uma INSTRUÇÃO de retificação — mantenha o tom de instrução/comando (ex: "corrigir X para Y", "acrescentar que...").\n';
+prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
+prompt+='CONTEXTO (trecho do resumo atual):\n'+ctx.resumo_atual+'\n\n';
+prompt+='TEXTO DITADO:\n'+txt;
+try{var revised=await callGemini(prompt);el('voiceTextRev').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertRev').textContent='Inserir revisado';el('btnVoiceReviewRev').style.display='none';}
+catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
+btn.disabled=false;
+}
+
+// Helper: auto-insert pending voice in revision area
+function autoInsertRevVoice(){
+if(el('voicePreviewRev').classList.contains('open')){var vt=el('voiceTextRev').textContent.trim();if(vt&&vt!=='Ouvindo...'){var r=el('revisionText');r.value=r.value?(r.value.trim()+'\n'+vt):vt;el('voicePreviewRev').classList.remove('open');}}
+}
+
+// REVISÃO — ENVIAR
 async function enviarRevisao(){
+autoInsertRevVoice();
 var instrucao=v('revisionText');if(!instrucao){shake(el('btnSendRevision'));return;}
 var currentText=el('resultado').textContent;var btn=el('btnSendRevision');btn.disabled=true;
-var fb=el('feedback');fb.innerHTML='<span class="spinner"></span> Revisando...';fb.className='feedback fb-loading';
+var fb=el('feedback');fb.innerHTML='<span class="spinner"></span> Atualizando resumo...';fb.className='feedback fb-loading';
 try{var txt=await callGemini(buildRevisionPrompt(currentText,instrucao));revisionNum++;showResultWithRevision(txt,true);}
 catch(err){fb.textContent='Erro na revisão: '+err.message;fb.className='feedback fb-err';}
 btn.disabled=false;
 }
 
-el('btnAccept').addEventListener('click',function(){el('revisionArea').style.display='none';el('finalActions').style.display='flex';el('feedback').textContent='Versão final aceita.';el('feedback').className='feedback fb-ok';el('resultLabel').textContent='Versão final';});
+// ACEITAR — com aviso se campo preenchido
+el('btnAccept').addEventListener('click',function(){
+autoInsertRevVoice();
+var pending=v('revisionText');
+if(pending){if(!confirm('Há texto de retificação não enviado:\n\n"'+pending.substring(0,80)+'..."\n\nDeseja aceitar o resumo atual mesmo assim?'))return;}
+el('revisionArea').style.display='none';el('finalActions').style.display='flex';el('feedback').textContent='Versão final aceita.';el('feedback').className='feedback fb-ok';el('resultLabel').textContent='Versão final';
+});
 el('btnSendRevision').addEventListener('click',function(){if(!decryptedKey){showPwModal(function(){enviarRevisao();});}else{enviarRevisao();}});
 el('btnGerar').addEventListener('click',function(){
 // Auto-insert pending voice text
@@ -664,7 +725,7 @@ D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',m
 document.querySelectorAll('.option-btn.selected,.sub-opt.selected').forEach(function(b){b.classList.remove('selected');});
 el('subDrogas').classList.remove('open');el('cedulaForm').classList.remove('open');el('cedList').innerHTML='';
 el('motivoDetail').classList.remove('open');el('resultado').textContent='';el('feedback').textContent='';
-el('revisionText').value='';el('voicePreview').classList.remove('open');
+el('revisionText').value='';el('voicePreview').classList.remove('open');el('voicePreviewRev').classList.remove('open');
 revisionNum=0;currentMode='new';goStep(0);
 });
 
