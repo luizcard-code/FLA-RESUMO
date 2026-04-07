@@ -656,7 +656,7 @@ D.observacoes=v('observacoes');if(EK==='COLE_AQUI'){executarGeracao();return;}if
 el('editGerar').addEventListener('click',function(){var orig=v('editResumoOriginal'),instr=v('editInstrucao');if(!orig||!instr){shake(this);return;}if(EK==='COLE_AQUI'){executarEdicao();return;}if(decryptedKey){executarEdicao();return;}showPwModal(function(){executarEdicao();});});
 el('btnCopiar').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;navigator.clipboard.writeText(t).then(function(){el('feedback').textContent='Copiado!';el('feedback').className='feedback fb-ok';setTimeout(function(){el('feedback').textContent='';},2000);});});
 
-el('btnWhatsApp').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;var url='https://wa.me/5514997337353?text='+encodeURIComponent(t);window.open(url,'_blank');});
+el('btnWhatsApp').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;var url='https://wa.me/551433123124?text='+encodeURIComponent(t);window.open(url,'_blank');});
 
 el('btnNovo').addEventListener('click',function(){
 D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',observacoes:''};
