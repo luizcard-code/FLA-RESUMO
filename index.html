@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -92,14 +93,70 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .motivo-detail{margin-top:10px;display:none}
 .motivo-detail.open{display:block}
 .version-tag{text-align:center;font-size:10px;color:#ccc;margin-top:16px}
+
+/* ===== NEW: Revision area ===== */
+.revision-area{margin-top:18px;padding:18px 16px;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:10px;animation:fadeIn .25s ease}
+.revision-area label{font-size:13px;font-weight:600;color:#92400e;display:block;margin-bottom:6px}
+.revision-area textarea{width:100%;padding:12px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;min-height:80px;-webkit-appearance:none;transition:border-color .2s}
+.revision-area textarea:focus{outline:none;border-color:#2563eb}
+.revision-actions{display:flex;gap:8px;margin-top:10px}
+.btn-revise{flex:1;padding:13px;border:none;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn-revise:active{transform:scale(.98)}
+.btn-send-revision{background:#d97706;color:#fff}
+.btn-send-revision:disabled{opacity:.5;cursor:not-allowed}
+.btn-accept{background:#16a34a;color:#fff}
+.revision-count{font-size:11px;color:#92400e;margin-top:6px;text-align:right}
+
+/* ===== NEW: Mode selector (step0) ===== */
+.mode-card{background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:24px 20px;margin-bottom:16px;animation:fadeIn .25s ease}
+.mode-btn{display:flex;align-items:center;gap:14px;padding:18px 16px;border:2px solid #e5e7eb;border-radius:12px;background:#fff;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;text-align:left;width:100%;margin-bottom:10px;-webkit-tap-highlight-color:transparent}
+.mode-btn:active{transform:scale(.98)}
+.mode-btn:hover{border-color:#2563eb;background:#eff6ff}
+.mode-icon{font-size:24px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:10px;flex-shrink:0}
+.mode-text{display:flex;flex-direction:column;gap:2px}
+.mode-text span{font-size:12px;color:#888;font-weight:400}
+
+/* ===== NEW: Edit existing card ===== */
+.edit-existing-card{display:none;background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:24px 20px;margin-bottom:16px;animation:fadeIn .25s ease}
+.edit-existing-card.active{display:block}
 </style>
+
 </head>
 <body>
+
 <div class="topbar"><h1>REGISTRO DE OCORRÊNCIA</h1><div class="topbar-sub" id="topSub">Polícia Federal — Bauru/SP</div></div>
+
 <div class="progress" id="progress"></div>
+
 <div class="container">
 
+<!-- STEP 0: MODE SELECTOR -->
+
+<div class="step-card" id="step0">
+<div class="step-question" style="margin-bottom:16px">Como deseja prosseguir?</div>
+<button class="mode-btn" id="modeNew">
+  <div class="mode-icon">📝</div>
+  <div class="mode-text"><strong>Nova ocorrência</strong><span>Preencher formulário completo</span></div>
+</button>
+<button class="mode-btn" id="modeEdit">
+  <div class="mode-icon">✏️</div>
+  <div class="mode-text"><strong>Editar resumo existente</strong><span>Colar resumo anterior e solicitar alterações</span></div>
+</button>
+</div>
+
+<!-- EDIT EXISTING -->
+
+<div class="edit-existing-card" id="editExisting">
+<div class="step-number">Edição de resumo</div>
+<div class="step-question">Cole o resumo e descreva a alteração</div>
+<div class="step-hint">A IA vai incorporar as alterações solicitadas</div>
+<div class="input-group"><label>Resumo existente</label><textarea id="editResumoOriginal" placeholder="Cole aqui o resumo anterior..." style="min-height:140px"></textarea></div>
+<div class="input-group"><label>O que deseja alterar?</label><textarea id="editInstrucao" placeholder="Ex: corrigir a placa para ABC1D23, acrescentar que havia fundo falso no veículo..."></textarea></div>
+<div class="nav-row"><button class="btn-nav btn-back" id="editBack">Voltar</button><button class="btn-nav btn-generate" id="editGerar">Gerar Revisão</button></div>
+</div>
+
 <!-- STEP 1: FORÇA -->
+
 <div class="step-card" id="step1">
 <div class="step-number">Passo 1 de 8</div>
 <div class="step-question">Qual a força policial?</div>
@@ -114,10 +171,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <button class="option-btn" data-val="Polícia Rodoviária Estadual"><span class="radio"></span>Pol. Rod. Estadual</button>
 <button class="option-btn" data-val="Receita Federal do Brasil"><span class="radio"></span>Receita Federal</button>
 </div>
-<div class="nav-row"><div style="flex:1"></div><button class="btn-nav btn-next" id="next1">Próximo</button></div>
+<div class="nav-row"><button class="btn-nav btn-back" id="back1">Voltar</button><button class="btn-nav btn-next" id="next1">Próximo</button></div>
 </div>
 
 <!-- STEP 2: MOTIVO -->
+
 <div class="step-card" id="step2">
 <div class="step-number">Passo 2 de 8</div>
 <div class="step-question">Motivo da abordagem</div>
@@ -140,6 +198,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- STEP 3: LOCAL -->
+
 <div class="step-card" id="step3">
 <div class="step-number">Passo 3 de 8</div>
 <div class="step-question">Onde foi a abordagem?</div>
@@ -151,6 +210,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- STEP 4: PLACA -->
+
 <div class="step-card" id="step4">
 <div class="step-number">Passo 4 de 8</div>
 <div class="step-question">Placa do veículo</div>
@@ -160,6 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- STEP 5: MATERIAL -->
+
 <div class="step-card" id="step5">
 <div class="step-number">Passo 5 de 8</div>
 <div class="step-question">O que foi apreendido?</div>
@@ -197,6 +258,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- STEP 6: IRREGULARIDADE -->
+
 <div class="step-card" id="step6">
 <div class="step-number">Passo 6 de 8</div>
 <div class="step-question">Qual a irregularidade?</div>
@@ -210,6 +272,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- STEP 7: DESTINO -->
+
 <div class="step-card" id="step7">
 <div class="step-number">Passo 7 de 8</div>
 <div class="step-question">Destino das mercadorias e veículo?</div>
@@ -223,6 +286,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- STEP 8: OBSERVAÇÕES -->
+
 <div class="step-card" id="step8">
 <div class="step-number">Passo 8 de 8</div>
 <div class="step-question">Alguma observação?</div>
@@ -232,19 +296,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- RESULTADO -->
+
 <div class="result-card" id="resultCard">
-<div class="result-label">Resumo gerado</div>
+<div class="result-label" id="resultLabel">Resumo gerado</div>
 <div class="result-box" id="resultado"></div>
 <div class="feedback" id="feedback"></div>
-<div class="result-actions">
-<button class="btn-action btn-copy" id="btnCopiar">Copiar texto</button>
-<button class="btn-action btn-new" id="btnNovo">Nova ocorrência</button>
+
+<!-- Revision area (visible while not accepted) -->
+
+<div class="revision-area" id="revisionArea">
+  <label>Retificação / Complemento</label>
+  <textarea id="revisionText" placeholder="Ex: corrigir a placa para XYZ9A99, acrescentar que o condutor tentou fuga a pé..."></textarea>
+  <div class="revision-actions">
+    <button class="btn-revise btn-accept" id="btnAccept">Aceitar versão</button>
+    <button class="btn-revise btn-send-revision" id="btnSendRevision">Reenviar à IA</button>
+  </div>
+  <div class="revision-count" id="revisionCount"></div>
+</div>
+
+<!-- Final actions (visible after accepting) -->
+
+<div class="result-actions" id="finalActions" style="display:none">
+  <button class="btn-action btn-copy" id="btnCopiar">Copiar texto</button>
+  <button class="btn-action btn-new" id="btnNovo">Nova ocorrência</button>
 </div>
 </div>
-<div class="version-tag">v1.0 — PF Bauru</div>
+
+<div class="version-tag">v2.0 — PF Bauru</div>
 </div>
 
 <!-- MODAL SENHA -->
+
 <div class="modal-overlay" id="pwOverlay">
 <div class="modal-box">
 <h2>Acesso protegido</h2>
@@ -256,6 +338,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <!-- MODAL ADMIN (segredo) -->
+
 <div class="modal-overlay" id="adminOverlay">
 <div class="modal-box">
 <h2>Chave API (admin)</h2>
@@ -266,12 +349,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 // ============================================================
-// CHAVE CRIPTOGRAFADA — COLE A STRING DO ENCRIPTADOR AQUI
+// CHAVE CRIPTOGRAFADA
 // ============================================================
 var EK='e2102277cb453ba42ef4fd93854f35d2:9f8a727e326f21bf088858b8:7e6803a9dd12f71cba93c9fa8c5679eba561fbdb6565d2527a9e72d3b10cdee0bf1061b3f1befc883d1990d332bbc41497babfc01686ea';
 // ============================================================
 
-var TOTAL=8,cur=1,decryptedKey='';
+var TOTAL=8,cur=0,decryptedKey='',revisionNum=0,currentMode='new';
 function el(id){return document.getElementById(id);}
 function v(id){return el(id).value.trim();}
 var D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
@@ -280,52 +363,95 @@ var D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:
 function hex2buf(h){var a=[];for(var i=0;i<h.length;i+=2)a.push(parseInt(h.substr(i,2),16));return new Uint8Array(a);}
 async function deriveKey(pw,salt){var enc=new TextEncoder();var km=await crypto.subtle.importKey('raw',enc.encode(pw),{name:'PBKDF2'},false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);}
 async function decryptKey(pw){
-  if(EK==='COLE_AQUI')return '';
-  var parts=EK.split(':');if(parts.length!==3)return '';
-  var salt=hex2buf(parts[0]),iv=hex2buf(parts[1]),data=hex2buf(parts[2]);
-  try{var key=await deriveKey(pw,salt);var dec=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,data);return new TextDecoder().decode(dec);}catch(e){return '';}
+if(EK==='COLE_AQUI')return '';
+var parts=EK.split(':');if(parts.length!==3)return '';
+var salt=hex2buf(parts[0]),iv=hex2buf(parts[1]),data=hex2buf(parts[2]);
+try{var key=await deriveKey(pw,salt);var dec=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,data);return new TextDecoder().decode(dec);}catch(e){return '';}
 }
 
 // ===== PASSWORD MODAL =====
 function showPwModal(cb){
-  el('pwInput').value='';el('pwFb').textContent='';
-  el('pwOverlay').classList.add('open');
-  el('pwInput').focus();
-  el('pwSubmit').onclick=async function(){
-    var pw=el('pwInput').value.trim();
-    if(!pw){el('pwFb').textContent='Digite a senha.';el('pwFb').style.color='#dc2626';return;}
-    el('pwFb').textContent='Verificando...';el('pwFb').style.color='#2563eb';
-    var k=await decryptKey(pw);
-    if(k){decryptedKey=k;el('pwOverlay').classList.remove('open');cb();}
-    else{el('pwFb').textContent='Senha incorreta.';el('pwFb').style.color='#dc2626';el('pwInput').value='';el('pwInput').focus();}
-  };
-  el('pwInput').onkeydown=function(e){if(e.key==='Enter')el('pwSubmit').click();};
+el('pwInput').value='';el('pwFb').textContent='';
+el('pwOverlay').classList.add('open');
+el('pwInput').focus();
+el('pwSubmit').onclick=async function(){
+var pw=el('pwInput').value.trim();
+if(!pw){el('pwFb').textContent='Digite a senha.';el('pwFb').style.color='#dc2626';return;}
+el('pwFb').textContent='Verificando...';el('pwFb').style.color='#2563eb';
+var k=await decryptKey(pw);
+if(k){decryptedKey=k;el('pwOverlay').classList.remove('open');cb();}
+else{el('pwFb').textContent='Senha incorreta.';el('pwFb').style.color='#dc2626';el('pwInput').value='';el('pwInput').focus();}
+};
+el('pwInput').onkeydown=function(e){if(e.key==='Enter')el('pwSubmit').click();};
 }
 
 // ===== ADMIN SECRET: 5 taps no subtítulo =====
 var adminTaps=0,adminTimer=null;
 el('topSub').addEventListener('click',function(){
-  adminTaps++;
-  clearTimeout(adminTimer);
-  adminTimer=setTimeout(function(){adminTaps=0;},2000);
-  if(adminTaps>=5){
-    adminTaps=0;
-    if(decryptedKey){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');}
-    else{
-      showPwModal(function(){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');});
-    }
-  }
+adminTaps++;
+clearTimeout(adminTimer);
+adminTimer=setTimeout(function(){adminTaps=0;},2000);
+if(adminTaps>=5){
+adminTaps=0;
+if(decryptedKey){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');}
+else{showPwModal(function(){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');});}
+}
 });
 
 // ===== PROGRESS =====
-function renderProg(){var h='';for(var i=1;i<=TOTAL;i++){var c='progress-dot';if(i<cur)c+=' done';else if(i===cur)c+=' active';h+='<div class="'+c+'"></div>';}el('progress').innerHTML=h;}
+function renderProg(){
+var h='';
+for(var i=1;i<=TOTAL;i++){
+  var c='progress-dot';
+  if(cur===0){/* step0 or edit mode: all grey */}
+  else if(i<cur)c+=' done';
+  else if(i===cur)c+=' active';
+  h+='<div class="'+c+'"></div>';
+}
+el('progress').innerHTML=h;
+}
 
 // ===== NAV =====
-function goStep(n){cur=n;for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.toggle('active',i===n);}el('resultCard').classList.remove('active');renderProg();window.scrollTo({top:0,behavior:'smooth'});if(n===7)updateDest();}
-function showResult(){for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.remove('active');}el('resultCard').classList.add('active');document.querySelectorAll('.progress-dot').forEach(function(d){d.classList.add('done');d.classList.remove('active');});}
+function hideAll(){
+el('step0').classList.remove('active');
+el('editExisting').classList.remove('active');
+for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.remove('active');}
+el('resultCard').classList.remove('active');
+}
+
+function goStep(n){
+cur=n;
+hideAll();
+if(n===0){el('step0').classList.add('active');}
+else{el('step'+n).classList.add('active');}
+renderProg();
+window.scrollTo({top:0,behavior:'smooth'});
+if(n===7)updateDest();
+}
+
+function showEditMode(){
+cur=0;
+hideAll();
+el('editExisting').classList.add('active');
+renderProg();
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showResult(){
+hideAll();
+el('resultCard').classList.add('active');
+document.querySelectorAll('.progress-dot').forEach(function(d){d.classList.add('done');d.classList.remove('active');});
+}
 
 function shake(b){b.style.animation='none';b.offsetHeight;b.style.animation='shakeX .4s ease';setTimeout(function(){b.style.animation='';},500);}
+
 var ss=document.createElement('style');ss.textContent='@keyframes shakeX{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';document.head.appendChild(ss);
+
+// ===== MODE SELECTOR =====
+el('modeNew').addEventListener('click',function(){currentMode='new';goStep(1);});
+el('modeEdit').addEventListener('click',function(){currentMode='edit';showEditMode();});
+el('editBack').addEventListener('click',function(){goStep(0);});
+el('back1').addEventListener('click',function(){goStep(0);});
 
 // ===== STEP LOGIC =====
 (function(){var bs=el('forcaOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.forca=b.dataset.val;});});})();
@@ -338,10 +464,13 @@ var mercBtns=document.querySelectorAll('#mercOpts .option-btn');
 mercBtns.forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('selected');D.mercs=[];mercBtns.forEach(function(x){if(x.classList.contains('selected'))D.mercs.push(x.dataset.val);});});});
 
 el('btnDrogas').addEventListener('click',function(){this.classList.toggle('selected');var o=this.classList.contains('selected');el('subDrogas').classList.toggle('open',o);if(!o){D.drogas=[];el('subDrogas').querySelectorAll('.sub-opt').forEach(function(s){s.classList.remove('selected');});}});
+
 el('subDrogas').querySelectorAll('.sub-opt').forEach(function(s){s.addEventListener('click',function(){s.classList.toggle('selected');D.drogas=[];el('subDrogas').querySelectorAll('.sub-opt.selected').forEach(function(x){D.drogas.push(x.dataset.val);});});});
 
 el('btnCedulas').addEventListener('click',function(){this.classList.toggle('selected');el('cedulaForm').classList.toggle('open',this.classList.contains('selected'));if(!this.classList.contains('selected')){D.cedulas=[];renderCed();}});
+
 el('btnAddCed').addEventListener('click',function(){var den=el('cedDenom').value,qtd=parseInt(el('cedQtd').value)||1,ser=el('cedSerie').value.trim();D.cedulas.push({d:den,q:qtd,s:ser});el('cedQtd').value='1';el('cedSerie').value='';renderCed();});
+
 function renderCed(){var c=el('cedList');if(!D.cedulas.length){c.innerHTML='';return;}var h='';D.cedulas.forEach(function(cd,i){h+='<div class="cedula-item"><span>'+cd.q+'x R$'+cd.d+(cd.s?' — Série: '+cd.s:'')+'</span><button onclick="remCed('+i+')">&times;</button></div>';});c.innerHTML=h;}
 function remCed(i){D.cedulas.splice(i,1);renderCed();}
 
@@ -350,13 +479,15 @@ function remCed(i){D.cedulas.splice(i,1);renderCed();}
 function hasMerc(){return D.mercs.length>0;}
 function hasPF(){return D.drogas.length>0||D.cedulas.length>0;}
 function onlyPF(){return !hasMerc()&&hasPF();}
-function updateDest(){
-  if(onlyPF()){el('destAuto').style.display='block';el('destAuto').textContent='Drogas e/ou cédulas falsas são apresentadas diretamente na PF. Destino definido automaticamente.';el('destOpts').style.display='none';el('destHint').style.display='none';D.destino='pf_direto';}
-  else{el('destAuto').style.display='none';el('destOpts').style.display='flex';el('destHint').style.display='block';D.destino='';el('destOpts').querySelectorAll('.option-btn').forEach(function(b){b.classList.remove('selected');});}
-}
-(function(){var bs=el('destOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.destMerc=b.dataset.val;D.destino=b.dataset.val;});});})();
-el('back7').addEventListener('click',function(){goStep(hasMerc()?6:5);});
 
+function updateDest(){
+if(onlyPF()){el('destAuto').style.display='block';el('destAuto').textContent='Drogas e/ou cédulas falsas são apresentadas diretamente na PF. Destino definido automaticamente.';el('destOpts').style.display='none';el('destHint').style.display='none';D.destino='pf_direto';}
+else{el('destAuto').style.display='none';el('destOpts').style.display='flex';el('destHint').style.display='block';D.destino='';el('destOpts').querySelectorAll('.option-btn').forEach(function(b){b.classList.remove('selected');});}
+}
+
+(function(){var bs=el('destOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.destMerc=b.dataset.val;D.destino=b.dataset.val;});});})();
+
+el('back7').addEventListener('click',function(){goStep(hasMerc()?6:5);});
 el('next1').addEventListener('click',function(){if(!D.forca){shake(this);return;}goStep(2);});
 el('next2').addEventListener('click',function(){if(!D.motivos.length){shake(this);return;}D.motivoDetalhe=v('motivoDetalhe');goStep(3);});
 el('next3').addEventListener('click',function(){D.km=v('km');D.rodovia=v('rodovia');D.municipio=v('municipio');if(!D.km||!D.rodovia||!D.municipio){shake(this);return;}goStep(4);});
@@ -367,104 +498,232 @@ el('next7').addEventListener('click',function(){if(!D.destino){shake(this);retur
 
 // ===== BUILD DATA =====
 function buildData(){
-  var s={forca:D.forca,motivos_abordagem:D.motivos};
-  if(D.motivoDetalhe)s.detalhe_motivo=D.motivoDetalhe;
-  s.local='KM '+D.km+', rodovia '+D.rodovia+', município '+D.municipio;s.placa=D.placa;
-  if(D.mercs.length)s.mercadorias=D.mercs.join(', ');
-  if(D.irregularidade)s.irregularidade=D.irregularidade;
-  if(D.drogas.length)s.drogas=D.drogas.map(function(d){return 'substância com características de '+d;}).join('; ');
-  if(D.cedulas.length){
-    s.cedulas_detalhamento=D.cedulas.map(function(c){var t=c.q+' cédula(s) de R$ '+c.d+',00';if(c.s)t+=', número de série: '+c.s;return t;}).join('; ');
-    var tot=D.cedulas.reduce(function(a,c){return a+c.q;},0);var val=D.cedulas.reduce(function(a,c){return a+c.q*parseInt(c.d);},0);
-    s.cedulas_resumo=tot+' cédula(s) falsas com valor de face total de R$ '+val.toLocaleString('pt-BR',{minimumFractionDigits:2});
-  }
-  var RFB='Depósito da Receita Federal - Bauru/SP, Rua Halim Aidar, Quadra 4, s/n - Vila Industrial, Bauru – SP, (14) 3042-9892';
-  if(hasMerc()&&hasPF()){s.destino_mercadorias=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';s.destino_drogas_cedulas='Drogas e/ou cédulas falsas apresentadas diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
-  else if(onlyPF()){s.destino='Material apreendido apresentado diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
-  else{s.destino=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';}
-  if(D.observacoes)s.observacoes=D.observacoes;
-  return s;
+var s={forca:D.forca,motivos_abordagem:D.motivos};
+if(D.motivoDetalhe)s.detalhe_motivo=D.motivoDetalhe;
+s.local='KM '+D.km+', rodovia '+D.rodovia+', município '+D.municipio;s.placa=D.placa;
+if(D.mercs.length)s.mercadorias=D.mercs.join(', ');
+if(D.irregularidade)s.irregularidade=D.irregularidade;
+if(D.drogas.length)s.drogas=D.drogas.map(function(d){return 'substância com características de '+d;}).join('; ');
+if(D.cedulas.length){
+s.cedulas_detalhamento=D.cedulas.map(function(c){var t=c.q+' cédula(s) de R$ '+c.d+',00';if(c.s)t+=', número de série: '+c.s;return t;}).join('; ');
+var tot=D.cedulas.reduce(function(a,c){return a+c.q;},0);var val=D.cedulas.reduce(function(a,c){return a+c.q*parseInt(c.d);},0);
+s.cedulas_resumo=tot+' cédula(s) falsas com valor de face total de R$ '+val.toLocaleString('pt-BR',{minimumFractionDigits:2});
+}
+var RFB='Depósito da Receita Federal - Bauru/SP, Rua Halim Aidar, Quadra 4, s/n - Vila Industrial, Bauru – SP, (14) 3042-9892';
+if(hasMerc()&&hasPF()){s.destino_mercadorias=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';s.destino_drogas_cedulas='Drogas e/ou cédulas falsas apresentadas diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
+else if(onlyPF()){s.destino='Material apreendido apresentado diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
+else{s.destino=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';}
+if(D.observacoes)s.observacoes=D.observacoes;
+return s;
 }
 
 function buildFallback(){
-  var s=buildData(),parts=[];
-  var motivoTxt=s.motivos_abordagem.join(', ');if(s.detalhe_motivo)motivoTxt+=' ('+s.detalhe_motivo+')';
-  var p='Trata-se de ocorrência apresentada pela '+s.forca+', a qual relata que durante '+motivoTxt+', próximo ao '+s.local+', foi dado sinal regulamentar de parada obrigatória ao veículo placa '+s.placa+', sendo que, após abordagem, foi identificado no interior do referido veículo';
-  var itens=[];
-  if(s.mercadorias)itens.push(s.mercadorias+(s.irregularidade?', '+s.irregularidade:''));
-  if(s.drogas)itens.push(s.drogas);
-  if(s.cedulas_detalhamento)itens.push(s.cedulas_resumo+' ('+s.cedulas_detalhamento+')');
-  p+=': '+itens.join('; ')+'.';
-  if(s.mercadorias)p+=' Pelos fatos, apresentaram o veículo e mercadorias à RFB de Bauru/SP, os quais serão devidamente contabilizados e verificados quanto a efetiva procedência e os valores, incluindo-se os tributos, sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis.';
-  parts.push(p);
-  if(s.destino_mercadorias){parts.push(s.destino_mercadorias);parts.push(s.destino_drogas_cedulas);}
-  else if(s.destino)parts.push(s.destino);
-  if(s.observacoes)parts.push('Observações: '+s.observacoes);
-  return parts.join('\n\n');
+var s=buildData(),parts=[];
+var motivoTxt=s.motivos_abordagem.join(', ');if(s.detalhe_motivo)motivoTxt+=' ('+s.detalhe_motivo+')';
+var p='Trata-se de ocorrência apresentada pela '+s.forca+', a qual relata que durante '+motivoTxt+', próximo ao '+s.local+', foi dado sinal regulamentar de parada obrigatória ao veículo placa '+s.placa+', sendo que, após abordagem, foi identificado no interior do referido veículo';
+var itens=[];
+if(s.mercadorias)itens.push(s.mercadorias+(s.irregularidade?', '+s.irregularidade:''));
+if(s.drogas)itens.push(s.drogas);
+if(s.cedulas_detalhamento)itens.push(s.cedulas_resumo+' ('+s.cedulas_detalhamento+')');
+p+=': '+itens.join('; ')+'.';
+if(s.mercadorias)p+=' Pelos fatos, apresentaram o veículo e mercadorias à RFB de Bauru/SP, os quais serão devidamente contabilizados e verificados quanto a efetiva procedência e os valores, incluindo-se os tributos, sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis.';
+parts.push(p);
+if(s.destino_mercadorias){parts.push(s.destino_mercadorias);parts.push(s.destino_drogas_cedulas);}
+else if(s.destino)parts.push(s.destino);
+if(s.observacoes)parts.push('Observações: '+s.observacoes);
+return parts.join('\n\n');
 }
 
-// ===== GERAR =====
+// ===== GEMINI API CALL =====
+async function callGemini(prompt){
+var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',{
+method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':decryptedKey},
+body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.15}})
+});
+if(!resp.ok)throw new Error('HTTP '+resp.status);
+var json=await resp.json();
+var txt=json&&json.candidates&&json.candidates[0]&&json.candidates[0].content&&json.candidates[0].content.parts&&json.candidates[0].content.parts[0]&&json.candidates[0].content.parts[0].text;
+if(!txt)throw new Error('Resposta vazia do Gemini');
+return txt.trim();
+}
+
+// ===== SHOW RESULT WITH REVISION LOOP =====
+function showResultWithRevision(text,isAI){
+showResult();
+el('resultado').textContent=text;
+el('feedback').textContent=isAI?'Resumo gerado por IA':'Resumo padrão (sem IA).';
+el('feedback').className='feedback '+(isAI?'fb-ok':'fb-err');
+el('revisionArea').style.display='block';
+el('finalActions').style.display='none';
+el('revisionText').value='';
+el('revisionCount').textContent=revisionNum>0?'Revisão #'+revisionNum:'';
+el('resultLabel').textContent=revisionNum>0?'Resumo revisado (#'+revisionNum+')':'Resumo gerado';
+}
+
+// ===== REVISION PROMPT BUILDER =====
+function buildRevisionPrompt(currentText,instruction){
+var p='Você é um escrivão da Polícia Federal de Bauru/SP.\n\n';
+p+='Abaixo está o RESUMO ATUAL de um auto de prisão em flagrante, seguido de uma INSTRUÇÃO DE RETIFICAÇÃO/COMPLEMENTO do usuário.\n\n';
+p+='REGRAS:\n';
+p+='1. Aplique EXATAMENTE o que o usuário pede na instrução.\n';
+p+='2. Mantenha todo o restante do texto inalterado — só modifique o necessário.\n';
+p+='3. NÃO invente informações além do que o usuário instruiu.\n';
+p+='4. Mantenha tom formal e jurídico.\n';
+p+='5. Retorne APENAS o texto revisado. Sem títulos, explicações, markdown ou comentários.\n\n';
+p+='RESUMO ATUAL:\n'+currentText+'\n\n';
+p+='INSTRUÇÃO DO USUÁRIO:\n'+instruction;
+return p;
+}
+
+// ===== EDIT EXISTING PROMPT =====
+function buildEditExistingPrompt(originalText,instruction){
+return buildRevisionPrompt(originalText,instruction);
+}
+
+// ===== MAIN GENERATION PROMPT =====
+function buildMainPrompt(sd){
+var prompt='Você é um escrivão da Polícia Federal de Bauru/SP redigindo o resumo de um auto de prisão em flagrante.\n\n';
+prompt+='REGRAS OBRIGATÓRIAS:\n';
+prompt+='1. Use SOMENTE os dados fornecidos no JSON abaixo. NÃO invente, deduza ou acrescente NENHUMA informação que não conste nos dados.\n';
+prompt+='2. NÃO corrija dados factuais (nomes, números, valores, placas, séries). Você pode apenas melhorar a REDAÇÃO e o encadeamento do texto.\n';
+prompt+='3. Use os "motivos_abordagem" para contextualizar a fundada suspeita de forma natural e jurídica no início do resumo, sem copiar ipsis litteris — reescreva com linguagem formal.\n';
+prompt+='4. Se houver "detalhe_motivo", incorpore-o naturalmente ao contexto da abordagem.\n';
+prompt+='5. Para drogas, use SEMPRE "substância com características de [nome]".\n';
+prompt+='6. Para cédulas falsas, mencione EXATAMENTE quantidade, denominação, valor de face e séries informados.\n';
+prompt+='7. Para mercadorias de descaminho/contrabando, mencione contabilização e verificação pela RFB quanto à procedência e tributos.\n';
+prompt+='8. Tom formal e jurídico. Organize em parágrafos: fatos (incluindo motivo da abordagem), destino do material, observações (se houver).\n';
+prompt+='9. Se houver "observacoes", incorpore-as de forma coesa e natural no texto — NÃO como item separado.\n';
+prompt+='10. SEMPRE inicie o resumo com "Trata-se de ocorrência apresentada pela [força policial]..." — este é o padrão formal obrigatório.\n';
+prompt+='11. SEMPRE encerre o primeiro parágrafo com: "...sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis." NÃO tipifique o crime — isso é atribuição exclusiva do Delegado.\n';
+prompt+='12. Retorne APENAS o texto do resumo. Sem títulos, explicações, markdown ou comentários.\n\n';
+prompt+='DADOS DA OCORRÊNCIA (JSON):\n'+JSON.stringify(sd,null,2);
+return prompt;
+}
+
+// ===== GERAR (nova ocorrência) =====
 async function executarGeracao(){
-  D.observacoes=v('observacoes');
-  var btn=el('btnGerar');btn.disabled=true;
-  showResult();
-  var res=el('resultado'),fb=el('feedback'),sd=buildData();
-  if(decryptedKey){
-    res.textContent='';fb.innerHTML='<span class="spinner"></span> Gerando resumo com IA...';fb.className='feedback fb-loading';
-    var prompt='Você é um escrivão da Polícia Federal de Bauru/SP redigindo o resumo de um auto de prisão em flagrante.\n\n';
-    prompt+='REGRAS OBRIGATÓRIAS:\n';
-    prompt+='1. Use SOMENTE os dados fornecidos no JSON abaixo. NÃO invente, deduza ou acrescente NENHUMA informação que não conste nos dados.\n';
-    prompt+='2. NÃO corrija dados factuais (nomes, números, valores, placas, séries). Você pode apenas melhorar a REDAÇÃO e o encadeamento do texto.\n';
-    prompt+='3. Use os "motivos_abordagem" para contextualizar a fundada suspeita de forma natural e jurídica no início do resumo, sem copiar ipsis litteris — reescreva com linguagem formal.\n';
-    prompt+='4. Se houver "detalhe_motivo", incorpore-o naturalmente ao contexto da abordagem.\n';
-    prompt+='5. Para drogas, use SEMPRE "substância com características de [nome]".\n';
-    prompt+='6. Para cédulas falsas, mencione EXATAMENTE quantidade, denominação, valor de face e séries informados.\n';
-    prompt+='7. Para mercadorias de descaminho/contrabando, mencione contabilização e verificação pela RFB quanto à procedência e tributos.\n';
-    prompt+='8. Tom formal e jurídico. Organize em parágrafos: fatos (incluindo motivo da abordagem), destino do material, observações (se houver).\n';
-    prompt+='9. Se houver "observacoes", incorpore-as de forma coesa e natural no texto — NÃO como item separado.\n';
-    prompt+='10. SEMPRE inicie o resumo com "Trata-se de ocorrência apresentada pela [força policial]..." — este é o padrão formal obrigatório.\n';
-    prompt+='11. SEMPRE encerre o primeiro parágrafo com: "...sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis." NÃO tipifique o crime — isso é atribuição exclusiva do Delegado.\n';
-    prompt+='12. Retorne APENAS o texto do resumo. Sem títulos, explicações, markdown ou comentários.\n\n';
-    prompt+='DADOS DA OCORRÊNCIA (JSON):\n'+JSON.stringify(sd,null,2);
-    try{
-      var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',{
-        method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':decryptedKey},
-        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.15}})
-      });
-      if(!resp.ok)throw new Error('HTTP '+resp.status);
-      var json=await resp.json();
-      var txt=json&&json.candidates&&json.candidates[0]&&json.candidates[0].content&&json.candidates[0].content.parts&&json.candidates[0].content.parts[0]&&json.candidates[0].content.parts[0].text;
-      if(!txt)throw new Error('Resposta vazia do Gemini');
-      res.textContent=txt.trim();fb.textContent='Resumo gerado por IA';fb.className='feedback fb-ok';
-    }catch(err){
-      res.textContent=buildFallback();fb.textContent='Erro: '+err.message+'. Resumo padrão exibido.';fb.className='feedback fb-err';
-    }
-  }else{
-    res.textContent=buildFallback();fb.textContent='Resumo padrão (sem IA).';fb.className='feedback fb-err';
-  }
-  btn.disabled=false;
+D.observacoes=v('observacoes');
+var btn=el('btnGerar');btn.disabled=true;
+revisionNum=0;
+showResult();
+var res=el('resultado'),fb=el('feedback'),sd=buildData();
+
+if(decryptedKey){
+res.textContent='';fb.innerHTML='<span class="spinner"></span> Gerando resumo com IA...';fb.className='feedback fb-loading';
+el('revisionArea').style.display='none';el('finalActions').style.display='none';
+try{
+var txt=await callGemini(buildMainPrompt(sd));
+showResultWithRevision(txt,true);
+}catch(err){
+showResultWithRevision(buildFallback(),false);
+fb.textContent='Erro: '+err.message+'. Resumo padrão exibido.';fb.className='feedback fb-err';
+}
+}else{
+showResultWithRevision(buildFallback(),false);
+}
+btn.disabled=false;
 }
 
-el('btnGerar').addEventListener('click',function(){
-  D.observacoes=v('observacoes');
-  if(EK==='COLE_AQUI'){executarGeracao();return;}
-  if(decryptedKey){executarGeracao();return;}
-  showPwModal(function(){executarGeracao();});
+// ===== GERAR (editar existente) =====
+async function executarEdicao(){
+var orig=v('editResumoOriginal'),instr=v('editInstrucao');
+var btn=el('editGerar');btn.disabled=true;
+revisionNum=0;currentMode='edit';
+showResult();
+var res=el('resultado'),fb=el('feedback');
+
+if(decryptedKey){
+res.textContent='';fb.innerHTML='<span class="spinner"></span> Revisando com IA...';fb.className='feedback fb-loading';
+el('revisionArea').style.display='none';el('finalActions').style.display='none';
+try{
+var txt=await callGemini(buildEditExistingPrompt(orig,instr));
+revisionNum=1;
+showResultWithRevision(txt,true);
+}catch(err){
+res.textContent=orig;
+fb.textContent='Erro: '+err.message+'. Texto original mantido.';fb.className='feedback fb-err';
+el('revisionArea').style.display='block';el('finalActions').style.display='none';
+}
+}else{
+res.textContent=orig;
+fb.textContent='Sem IA disponível. Cole a senha primeiro.';fb.className='feedback fb-err';
+el('revisionArea').style.display='block';el('finalActions').style.display='none';
+}
+btn.disabled=false;
+}
+
+// ===== SEND REVISION =====
+async function enviarRevisao(){
+var instrucao=v('revisionText');
+if(!instrucao){shake(el('btnSendRevision'));return;}
+var currentText=el('resultado').textContent;
+var btn=el('btnSendRevision');btn.disabled=true;
+var fb=el('feedback');
+fb.innerHTML='<span class="spinner"></span> Revisando...';fb.className='feedback fb-loading';
+
+try{
+var txt=await callGemini(buildRevisionPrompt(currentText,instrucao));
+revisionNum++;
+showResultWithRevision(txt,true);
+}catch(err){
+fb.textContent='Erro na revisão: '+err.message;fb.className='feedback fb-err';
+}
+btn.disabled=false;
+}
+
+// ===== ACCEPT VERSION =====
+el('btnAccept').addEventListener('click',function(){
+el('revisionArea').style.display='none';
+el('finalActions').style.display='flex';
+el('feedback').textContent='Versão final aceita.';el('feedback').className='feedback fb-ok';
+el('resultLabel').textContent='Versão final';
 });
 
+// ===== SEND REVISION BUTTON =====
+el('btnSendRevision').addEventListener('click',function(){
+if(!decryptedKey){
+showPwModal(function(){enviarRevisao();});
+}else{
+enviarRevisao();
+}
+});
+
+// ===== TRIGGER GERAR (nova ocorrência) =====
+el('btnGerar').addEventListener('click',function(){
+D.observacoes=v('observacoes');
+if(EK==='COLE_AQUI'){executarGeracao();return;}
+if(decryptedKey){executarGeracao();return;}
+showPwModal(function(){executarGeracao();});
+});
+
+// ===== TRIGGER GERAR (editar existente) =====
+el('editGerar').addEventListener('click',function(){
+var orig=v('editResumoOriginal'),instr=v('editInstrucao');
+if(!orig||!instr){shake(this);return;}
+if(EK==='COLE_AQUI'){executarEdicao();return;}
+if(decryptedKey){executarEdicao();return;}
+showPwModal(function(){executarEdicao();});
+});
+
+// ===== COPY =====
 el('btnCopiar').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;navigator.clipboard.writeText(t).then(function(){el('feedback').textContent='Copiado!';el('feedback').className='feedback fb-ok';setTimeout(function(){el('feedback').textContent='';},2000);});});
 
+// ===== NOVA OCORRÊNCIA =====
 el('btnNovo').addEventListener('click',function(){
-  D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
-  ['km','rodovia','municipio','placa','observacoes','motivoDetalhe'].forEach(function(id){el(id).value='';});
-  document.querySelectorAll('.option-btn.selected,.sub-opt.selected').forEach(function(b){b.classList.remove('selected');});
-  el('subDrogas').classList.remove('open');el('cedulaForm').classList.remove('open');el('cedList').innerHTML='';
-  el('motivoDetail').classList.remove('open');
-  el('resultado').textContent='';el('feedback').textContent='';
-  goStep(1);
+D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
+['km','rodovia','municipio','placa','observacoes','motivoDetalhe','editResumoOriginal','editInstrucao'].forEach(function(id){el(id).value='';});
+document.querySelectorAll('.option-btn.selected,.sub-opt.selected').forEach(function(b){b.classList.remove('selected');});
+el('subDrogas').classList.remove('open');el('cedulaForm').classList.remove('open');el('cedList').innerHTML='';
+el('motivoDetail').classList.remove('open');
+el('resultado').textContent='';el('feedback').textContent='';
+el('revisionText').value='';
+revisionNum=0;currentMode='new';
+goStep(0);
 });
 
-goStep(1);
+// ===== INIT =====
+goStep(0);
 </script>
+
 </body>
 </html>
