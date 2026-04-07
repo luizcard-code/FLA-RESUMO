@@ -121,8 +121,9 @@ html{overscroll-behavior-y:contain}
 .voice-preview{display:none;margin-top:10px;padding:14px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;animation:fadeIn .25s ease}
 .voice-preview.open{display:block}
 .voice-preview-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.voice-preview-text{font-size:14px;line-height:1.6;min-height:40px;color:#333;white-space:pre-wrap}
-.voice-preview-text.listening{color:#999;font-style:italic}
+.voice-preview-text{font-size:14px;line-height:1.6;min-height:60px;color:#333;white-space:pre-wrap;width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-family:inherit;resize:vertical;background:#fff;-webkit-appearance:none;transition:border-color .2s}
+.voice-preview-text:focus{outline:none;border-color:#2563eb}
+.voice-preview-text.listening{color:#999;font-style:italic;background:#f9fafb}
 .voice-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .btn-voice{padding:10px 14px;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s}
 .btn-voice:active{transform:scale(.98)}
@@ -163,7 +164,7 @@ html{overscroll-behavior-y:contain}
 <div class="voice-no-support" id="voiceNoSupportEdit" style="display:none">Seu navegador não suporta ditado por voz. Use o campo de texto acima.</div>
 <div class="voice-preview" id="voicePreviewEdit">
 <div class="voice-preview-label">Transcrição</div>
-<div class="voice-preview-text" id="voiceTextEdit">Ouvindo...</div>
+<textarea class="voice-preview-text" id="voiceTextEdit" rows="3">Ouvindo...</textarea>
 <div class="voice-actions" id="voiceActionsEdit" style="display:none">
   <button class="btn-voice btn-voice-insert" id="btnVoiceInsertEdit">Inserir</button>
   <button class="btn-voice btn-voice-review" id="btnVoiceReviewEdit">Revisar áudio com IA</button>
@@ -299,7 +300,7 @@ html{overscroll-behavior-y:contain}
 <div class="voice-no-support" id="voiceNoSupport">Seu navegador não suporta ditado por voz. Use o campo de texto acima.</div>
 <div class="voice-preview" id="voicePreview">
 <div class="voice-preview-label">Transcrição</div>
-<div class="voice-preview-text" id="voiceText">Ouvindo...</div>
+<textarea class="voice-preview-text" id="voiceText" rows="3">Ouvindo...</textarea>
 <div class="voice-actions" id="voiceActions" style="display:none">
   <button class="btn-voice btn-voice-insert" id="btnVoiceInsert">Inserir</button>
   <button class="btn-voice btn-voice-review" id="btnVoiceReview">Revisar áudio com IA</button>
@@ -324,7 +325,7 @@ html{overscroll-behavior-y:contain}
   <div class="voice-no-support" id="voiceNoSupportRev" style="display:none">Seu navegador não suporta ditado por voz. Use o campo de texto acima.</div>
   <div class="voice-preview" id="voicePreviewRev">
     <div class="voice-preview-label">Transcrição</div>
-    <div class="voice-preview-text" id="voiceTextRev">Ouvindo...</div>
+    <textarea class="voice-preview-text" id="voiceTextRev" rows="3">Ouvindo...</textarea>
     <div class="voice-actions" id="voiceActionsRev" style="display:none">
       <button class="btn-voice btn-voice-insert" id="btnVoiceInsertRev">Inserir</button>
       <button class="btn-voice btn-voice-review" id="btnVoiceReviewRev">Revisar áudio com IA</button>
@@ -451,7 +452,7 @@ if(e.results[i].isFinal){finalTranscript+=e.results[i][0].transcript+' ';}
 else{interimTranscript+=e.results[i][0].transcript;}
 }
 var display=finalTranscript+(interimTranscript?' '+interimTranscript:'');
-el('voiceText').textContent=display||'Ouvindo...';
+el('voiceText').value=display||'Ouvindo...';
 el('voiceText').classList.toggle('listening',!finalTranscript&&!interimTranscript);
 };
 
@@ -474,7 +475,7 @@ isRecording=true;shouldRestart=true;
 el('btnMic').classList.add('recording');
 el('micLabel').textContent='Parar';
 el('voicePreview').classList.add('open');
-el('voiceText').textContent='Ouvindo...';
+el('voiceText').value='Ouvindo...';
 el('voiceText').classList.add('listening');
 el('voiceActions').style.display='none';
 el('voiceFeedback').textContent='';
@@ -489,7 +490,7 @@ el('micLabel').textContent='Ditar';
 if(manual){try{recognition.stop();}catch(e){}}
 var txt=(finalTranscript+interimTranscript).trim();
 if(txt){
-el('voiceText').textContent=txt;
+el('voiceText').value=txt;
 el('voiceText').classList.remove('listening');
 el('voiceActions').style.display='flex';
 }else{
@@ -503,7 +504,7 @@ if(isRecording){stopRecording(true);}else{startRecording();}
 });
 
 el('btnVoiceInsert').addEventListener('click',function(){
-var txt=el('voiceText').textContent.trim();if(!txt)return;
+var txt=el('voiceText').value.trim();if(!txt)return;
 var obs=el('observacoes');
 obs.value=obs.value?(obs.value.trim()+'\n'+txt):txt;
 el('voicePreview').classList.remove('open');el('voiceFeedback').textContent='';
@@ -514,7 +515,7 @@ el('voicePreview').classList.remove('open');el('voiceFeedback').textContent='';
 });
 
 el('btnVoiceReview').addEventListener('click',function(){
-var txt=el('voiceText').textContent.trim();if(!txt)return;
+var txt=el('voiceText').value.trim();if(!txt)return;
 if(!decryptedKey){showPwModal(function(){reviewVoice(txt);});}
 else{reviewVoice(txt);}
 });
@@ -538,7 +539,7 @@ prompt+='NÃO altere fatos, nomes, números, placas ou informações substantiva
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 if(Object.keys(ctx).length)prompt+='CONTEXTO DA OCORRÊNCIA:\n'+JSON.stringify(ctx,null,2)+'\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceText').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsert').textContent='Inserir revisado';el('btnVoiceReview').style.display='none';}
+try{var revised=await callGemini(prompt);el('voiceText').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsert').textContent='Inserir revisado';el('btnVoiceReview').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
@@ -547,19 +548,19 @@ btn.disabled=false;
 var isRecEdit=false,shouldRestartEdit=false,finalTransEdit='',interimTransEdit='',recEdit=null;
 if(speechSupported){
 recEdit=new SpeechRec();recEdit.lang='pt-BR';recEdit.interimResults=true;recEdit.continuous=false;recEdit.maxAlternatives=1;
-recEdit.onresult=function(e){interimTransEdit='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalTransEdit+=e.results[i][0].transcript+' ';}else{interimTransEdit+=e.results[i][0].transcript;}}var display=finalTransEdit+(interimTransEdit?' '+interimTransEdit:'');el('voiceTextEdit').textContent=display||'Ouvindo...';el('voiceTextEdit').classList.toggle('listening',!finalTransEdit&&!interimTransEdit);};
+recEdit.onresult=function(e){interimTransEdit='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalTransEdit+=e.results[i][0].transcript+' ';}else{interimTransEdit+=e.results[i][0].transcript;}}var display=finalTransEdit+(interimTransEdit?' '+interimTransEdit:'');el('voiceTextEdit').value=display||'Ouvindo...';el('voiceTextEdit').classList.toggle('listening',!finalTransEdit&&!interimTransEdit);};
 recEdit.onend=function(){if(shouldRestartEdit&&isRecEdit){try{recEdit.start();}catch(e){}return;}stopRecEdit(false);};
 recEdit.onerror=function(e){if(e.error==='no-speech'&&isRecEdit&&shouldRestartEdit){try{recEdit.start();}catch(ex){}return;}stopRecEdit(false);};
 }
-function startRecEdit(){if(!speechSupported)return;finalTransEdit='';interimTransEdit='';isRecEdit=true;shouldRestartEdit=true;el('btnMicEdit').classList.add('recording');el('micLabelEdit').textContent='Parar';el('voicePreviewEdit').classList.add('open');el('voiceTextEdit').textContent='Ouvindo...';el('voiceTextEdit').classList.add('listening');el('voiceActionsEdit').style.display='none';el('voiceFeedbackEdit').textContent='';el('btnVoiceInsertEdit').textContent='Inserir';el('btnVoiceReviewEdit').style.display='';try{recEdit.start();}catch(e){}}
-function stopRecEdit(manual){isRecEdit=false;shouldRestartEdit=false;el('btnMicEdit').classList.remove('recording');el('micLabelEdit').textContent='Ditar';if(manual){try{recEdit.stop();}catch(e){}}var txt=(finalTransEdit+interimTransEdit).trim();if(txt){el('voiceTextEdit').textContent=txt;el('voiceTextEdit').classList.remove('listening');el('voiceActionsEdit').style.display='flex';}else{el('voicePreviewEdit').classList.remove('open');}}
+function startRecEdit(){if(!speechSupported)return;finalTransEdit='';interimTransEdit='';isRecEdit=true;shouldRestartEdit=true;el('btnMicEdit').classList.add('recording');el('micLabelEdit').textContent='Parar';el('voicePreviewEdit').classList.add('open');el('voiceTextEdit').value='Ouvindo...';el('voiceTextEdit').classList.add('listening');el('voiceActionsEdit').style.display='none';el('voiceFeedbackEdit').textContent='';el('btnVoiceInsertEdit').textContent='Inserir';el('btnVoiceReviewEdit').style.display='';try{recEdit.start();}catch(e){}}
+function stopRecEdit(manual){isRecEdit=false;shouldRestartEdit=false;el('btnMicEdit').classList.remove('recording');el('micLabelEdit').textContent='Ditar';if(manual){try{recEdit.stop();}catch(e){}}var txt=(finalTransEdit+interimTransEdit).trim();if(txt){el('voiceTextEdit').value=txt;el('voiceTextEdit').classList.remove('listening');el('voiceActionsEdit').style.display='flex';}else{el('voicePreviewEdit').classList.remove('open');}}
 
 if(!speechSupported){el('btnMicEdit').classList.add('unavailable');el('btnMicEdit').addEventListener('click',function(){el('voiceNoSupportEdit').style.display='block';});}
 else{el('btnMicEdit').addEventListener('click',function(){if(isRecEdit){stopRecEdit(true);}else{startRecEdit();}});}
 
-el('btnVoiceInsertEdit').addEventListener('click',function(){var txt=el('voiceTextEdit').textContent.trim();if(!txt)return;var r=el('editInstrucao');r.value=r.value?(r.value.trim()+'\n'+txt):txt;el('voicePreviewEdit').classList.remove('open');el('voiceFeedbackEdit').textContent='';});
+el('btnVoiceInsertEdit').addEventListener('click',function(){var txt=el('voiceTextEdit').value.trim();if(!txt)return;var r=el('editInstrucao');r.value=r.value?(r.value.trim()+'\n'+txt):txt;el('voicePreviewEdit').classList.remove('open');el('voiceFeedbackEdit').textContent='';});
 el('btnVoiceDiscardEdit').addEventListener('click',function(){el('voicePreviewEdit').classList.remove('open');el('voiceFeedbackEdit').textContent='';});
-el('btnVoiceReviewEdit').addEventListener('click',function(){var txt=el('voiceTextEdit').textContent.trim();if(!txt)return;if(!decryptedKey){showPwModal(function(){reviewVoiceEdit(txt);});}else{reviewVoiceEdit(txt);}});
+el('btnVoiceReviewEdit').addEventListener('click',function(){var txt=el('voiceTextEdit').value.trim();if(!txt)return;if(!decryptedKey){showPwModal(function(){reviewVoiceEdit(txt);});}else{reviewVoiceEdit(txt);}});
 
 async function reviewVoiceEdit(txt){
 var fb=el('voiceFeedbackEdit'),btn=el('btnVoiceReviewEdit');btn.disabled=true;
@@ -573,13 +574,13 @@ prompt+='Este texto é uma INSTRUÇÃO de retificação — mantenha o tom de in
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 if(ctx)prompt+='CONTEXTO (trecho do resumo original):\n'+ctx+'...\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceTextEdit').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertEdit').textContent='Inserir revisado';el('btnVoiceReviewEdit').style.display='none';}
+try{var revised=await callGemini(prompt);el('voiceTextEdit').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertEdit').textContent='Inserir revisado';el('btnVoiceReviewEdit').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
 
 function autoInsertEditVoice(){
-if(el('voicePreviewEdit').classList.contains('open')){var vt=el('voiceTextEdit').textContent.trim();if(vt&&vt!=='Ouvindo...'){var r=el('editInstrucao');r.value=r.value?(r.value.trim()+'\n'+vt):vt;el('voicePreviewEdit').classList.remove('open');}}
+if(el('voicePreviewEdit').classList.contains('open')){var vt=el('voiceTextEdit').value.trim();if(vt&&vt!=='Ouvindo...'){var r=el('editInstrucao');r.value=r.value?(r.value.trim()+'\n'+vt):vt;el('voicePreviewEdit').classList.remove('open');}}
 }
 
 // ===== BUILD DATA =====
@@ -714,19 +715,19 @@ btn.disabled=false;
 var isRecRev=false,shouldRestartRev=false,finalTransRev='',interimTransRev='',recRev=null;
 if(speechSupported){
 recRev=new SpeechRec();recRev.lang='pt-BR';recRev.interimResults=true;recRev.continuous=false;recRev.maxAlternatives=1;
-recRev.onresult=function(e){interimTransRev='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalTransRev+=e.results[i][0].transcript+' ';}else{interimTransRev+=e.results[i][0].transcript;}}var display=finalTransRev+(interimTransRev?' '+interimTransRev:'');el('voiceTextRev').textContent=display||'Ouvindo...';el('voiceTextRev').classList.toggle('listening',!finalTransRev&&!interimTransRev);};
+recRev.onresult=function(e){interimTransRev='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalTransRev+=e.results[i][0].transcript+' ';}else{interimTransRev+=e.results[i][0].transcript;}}var display=finalTransRev+(interimTransRev?' '+interimTransRev:'');el('voiceTextRev').value=display||'Ouvindo...';el('voiceTextRev').classList.toggle('listening',!finalTransRev&&!interimTransRev);};
 recRev.onend=function(){if(shouldRestartRev&&isRecRev){try{recRev.start();}catch(e){}return;}stopRecRev(false);};
 recRev.onerror=function(e){if(e.error==='no-speech'&&isRecRev&&shouldRestartRev){try{recRev.start();}catch(ex){}return;}stopRecRev(false);};
 }
-function startRecRev(){if(!speechSupported)return;finalTransRev='';interimTransRev='';isRecRev=true;shouldRestartRev=true;el('btnMicRev').classList.add('recording');el('micLabelRev').textContent='Parar';el('voicePreviewRev').classList.add('open');el('voiceTextRev').textContent='Ouvindo...';el('voiceTextRev').classList.add('listening');el('voiceActionsRev').style.display='none';el('voiceFeedbackRev').textContent='';el('btnVoiceInsertRev').textContent='Inserir';el('btnVoiceReviewRev').style.display='';try{recRev.start();}catch(e){}}
-function stopRecRev(manual){isRecRev=false;shouldRestartRev=false;el('btnMicRev').classList.remove('recording');el('micLabelRev').textContent='Ditar';if(manual){try{recRev.stop();}catch(e){}}var txt=(finalTransRev+interimTransRev).trim();if(txt){el('voiceTextRev').textContent=txt;el('voiceTextRev').classList.remove('listening');el('voiceActionsRev').style.display='flex';}else{el('voicePreviewRev').classList.remove('open');}}
+function startRecRev(){if(!speechSupported)return;finalTransRev='';interimTransRev='';isRecRev=true;shouldRestartRev=true;el('btnMicRev').classList.add('recording');el('micLabelRev').textContent='Parar';el('voicePreviewRev').classList.add('open');el('voiceTextRev').value='Ouvindo...';el('voiceTextRev').classList.add('listening');el('voiceActionsRev').style.display='none';el('voiceFeedbackRev').textContent='';el('btnVoiceInsertRev').textContent='Inserir';el('btnVoiceReviewRev').style.display='';try{recRev.start();}catch(e){}}
+function stopRecRev(manual){isRecRev=false;shouldRestartRev=false;el('btnMicRev').classList.remove('recording');el('micLabelRev').textContent='Ditar';if(manual){try{recRev.stop();}catch(e){}}var txt=(finalTransRev+interimTransRev).trim();if(txt){el('voiceTextRev').value=txt;el('voiceTextRev').classList.remove('listening');el('voiceActionsRev').style.display='flex';}else{el('voicePreviewRev').classList.remove('open');}}
 
 if(!speechSupported){el('btnMicRev').classList.add('unavailable');el('btnMicRev').addEventListener('click',function(){el('voiceNoSupportRev').style.display='block';});}
 else{el('btnMicRev').addEventListener('click',function(){if(isRecRev){stopRecRev(true);}else{startRecRev();}});}
 
-el('btnVoiceInsertRev').addEventListener('click',function(){var txt=el('voiceTextRev').textContent.trim();if(!txt)return;var r=el('revisionText');r.value=r.value?(r.value.trim()+'\n'+txt):txt;el('voicePreviewRev').classList.remove('open');el('voiceFeedbackRev').textContent='';});
+el('btnVoiceInsertRev').addEventListener('click',function(){var txt=el('voiceTextRev').value.trim();if(!txt)return;var r=el('revisionText');r.value=r.value?(r.value.trim()+'\n'+txt):txt;el('voicePreviewRev').classList.remove('open');el('voiceFeedbackRev').textContent='';});
 el('btnVoiceDiscardRev').addEventListener('click',function(){el('voicePreviewRev').classList.remove('open');el('voiceFeedbackRev').textContent='';});
-el('btnVoiceReviewRev').addEventListener('click',function(){var txt=el('voiceTextRev').textContent.trim();if(!txt)return;if(!decryptedKey){showPwModal(function(){reviewVoiceRev(txt);});}else{reviewVoiceRev(txt);}});
+el('btnVoiceReviewRev').addEventListener('click',function(){var txt=el('voiceTextRev').value.trim();if(!txt)return;if(!decryptedKey){showPwModal(function(){reviewVoiceRev(txt);});}else{reviewVoiceRev(txt);}});
 
 async function reviewVoiceRev(txt){
 var fb=el('voiceFeedbackRev'),btn=el('btnVoiceReviewRev');btn.disabled=true;
@@ -740,14 +741,14 @@ prompt+='Este texto é uma INSTRUÇÃO de retificação — mantenha o tom de in
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 prompt+='CONTEXTO (trecho do resumo atual):\n'+ctx.resumo_atual+'\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceTextRev').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertRev').textContent='Inserir revisado';el('btnVoiceReviewRev').style.display='none';}
+try{var revised=await callGemini(prompt);el('voiceTextRev').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertRev').textContent='Inserir revisado';el('btnVoiceReviewRev').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
 
 // Helper: auto-insert pending voice in revision area
 function autoInsertRevVoice(){
-if(el('voicePreviewRev').classList.contains('open')){var vt=el('voiceTextRev').textContent.trim();if(vt&&vt!=='Ouvindo...'){var r=el('revisionText');r.value=r.value?(r.value.trim()+'\n'+vt):vt;el('voicePreviewRev').classList.remove('open');}}
+if(el('voicePreviewRev').classList.contains('open')){var vt=el('voiceTextRev').value.trim();if(vt&&vt!=='Ouvindo...'){var r=el('revisionText');r.value=r.value?(r.value.trim()+'\n'+vt):vt;el('voicePreviewRev').classList.remove('open');}}
 }
 
 // REVISÃO — ENVIAR
@@ -771,7 +772,7 @@ el('revisionArea').style.display='none';el('finalActions').style.display='flex';
 el('btnSendRevision').addEventListener('click',function(){if(!decryptedKey){showPwModal(function(){enviarRevisao();});}else{enviarRevisao();}});
 el('btnGerar').addEventListener('click',function(){
 // Auto-insert pending voice text
-if(el('voicePreview').classList.contains('open')){var vt=el('voiceText').textContent.trim();if(vt&&vt!=='Ouvindo...'){var obs=el('observacoes');obs.value=obs.value?(obs.value.trim()+'\n'+vt):vt;el('voicePreview').classList.remove('open');}}
+if(el('voicePreview').classList.contains('open')){var vt=el('voiceText').value.trim();if(vt&&vt!=='Ouvindo...'){var obs=el('observacoes');obs.value=obs.value?(obs.value.trim()+'\n'+vt):vt;el('voicePreview').classList.remove('open');}}
 D.observacoes=v('observacoes');if(EK==='COLE_AQUI'){executarGeracao();return;}if(decryptedKey){executarGeracao();return;}showPwModal(function(){executarGeracao();});});
 el('editGerar').addEventListener('click',function(){
 autoInsertEditVoice();
