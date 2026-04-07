@@ -6,7 +6,8 @@
 <title>Registro de Ocorrência — PF Bauru</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a1a;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#1a1a1a;min-height:100vh;padding-bottom:env(safe-area-inset-bottom);overscroll-behavior-y:contain}
+html{overscroll-behavior-y:contain}
 .topbar{background:#1e3a5f;color:#fff;padding:14px 20px;text-align:center;position:sticky;top:0;z-index:10}
 .topbar h1{font-size:15px;font-weight:600;letter-spacing:.3px}
 .topbar-sub{font-size:11px;opacity:.7;margin-top:2px;cursor:default;user-select:none}
@@ -152,7 +153,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="step-question">Cole o resumo e descreva a alteração</div>
 <div class="step-hint">A IA vai incorporar as alterações solicitadas</div>
 <div class="input-group"><label>Resumo existente</label><textarea id="editResumoOriginal" placeholder="Cole aqui o resumo anterior..." style="min-height:140px"></textarea></div>
-<div class="input-group"><label>O que deseja alterar?</label><textarea id="editInstrucao" placeholder="Ex: corrigir a placa para ABC1D23, acrescentar que havia fundo falso no veículo..."></textarea></div>
+<div class="input-group" style="margin-bottom:0">
+<div class="obs-header">
+  <label>O que deseja alterar?</label>
+  <button class="btn-mic" id="btnMicEdit"><span class="mic-icon">🎤</span> <span id="micLabelEdit">Ditar</span></button>
+</div>
+<textarea id="editInstrucao" placeholder="Digite ou dite. Ex: corrigir a placa para ABC1D23, acrescentar que havia fundo falso no veículo..."></textarea>
+</div>
+<div class="voice-no-support" id="voiceNoSupportEdit" style="display:none">Seu navegador não suporta ditado por voz. Use o campo de texto acima.</div>
+<div class="voice-preview" id="voicePreviewEdit">
+<div class="voice-preview-label">Transcrição</div>
+<div class="voice-preview-text" id="voiceTextEdit">Ouvindo...</div>
+<div class="voice-actions" id="voiceActionsEdit" style="display:none">
+  <button class="btn-voice btn-voice-insert" id="btnVoiceInsertEdit">Inserir</button>
+  <button class="btn-voice btn-voice-review" id="btnVoiceReviewEdit">Revisar áudio com IA</button>
+  <button class="btn-voice btn-voice-discard" id="btnVoiceDiscardEdit">Descartar</button>
+</div>
+<div class="voice-feedback" id="voiceFeedbackEdit"></div>
+</div>
 <div class="nav-row"><button class="btn-nav btn-back" id="editBack">Voltar</button><button class="btn-nav btn-generate" id="editGerar">Gerar Revisão</button></div>
 </div>
 
@@ -327,7 +345,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<div class="version-tag">v2.2 — PF Bauru</div>
+<div class="version-tag">v2.3 — PF Bauru</div>
 </div>
 
 <!-- MODAL SENHA -->
@@ -525,6 +543,45 @@ catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
 
+// ===== VOICE — EDIT EXISTING =====
+var isRecEdit=false,shouldRestartEdit=false,finalTransEdit='',interimTransEdit='',recEdit=null;
+if(speechSupported){
+recEdit=new SpeechRec();recEdit.lang='pt-BR';recEdit.interimResults=true;recEdit.continuous=false;recEdit.maxAlternatives=1;
+recEdit.onresult=function(e){interimTransEdit='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalTransEdit+=e.results[i][0].transcript+' ';}else{interimTransEdit+=e.results[i][0].transcript;}}var display=finalTransEdit+(interimTransEdit?' '+interimTransEdit:'');el('voiceTextEdit').textContent=display||'Ouvindo...';el('voiceTextEdit').classList.toggle('listening',!finalTransEdit&&!interimTransEdit);};
+recEdit.onend=function(){if(shouldRestartEdit&&isRecEdit){try{recEdit.start();}catch(e){}return;}stopRecEdit(false);};
+recEdit.onerror=function(e){if(e.error==='no-speech'&&isRecEdit&&shouldRestartEdit){try{recEdit.start();}catch(ex){}return;}stopRecEdit(false);};
+}
+function startRecEdit(){if(!speechSupported)return;finalTransEdit='';interimTransEdit='';isRecEdit=true;shouldRestartEdit=true;el('btnMicEdit').classList.add('recording');el('micLabelEdit').textContent='Parar';el('voicePreviewEdit').classList.add('open');el('voiceTextEdit').textContent='Ouvindo...';el('voiceTextEdit').classList.add('listening');el('voiceActionsEdit').style.display='none';el('voiceFeedbackEdit').textContent='';el('btnVoiceInsertEdit').textContent='Inserir';el('btnVoiceReviewEdit').style.display='';try{recEdit.start();}catch(e){}}
+function stopRecEdit(manual){isRecEdit=false;shouldRestartEdit=false;el('btnMicEdit').classList.remove('recording');el('micLabelEdit').textContent='Ditar';if(manual){try{recEdit.stop();}catch(e){}}var txt=(finalTransEdit+interimTransEdit).trim();if(txt){el('voiceTextEdit').textContent=txt;el('voiceTextEdit').classList.remove('listening');el('voiceActionsEdit').style.display='flex';}else{el('voicePreviewEdit').classList.remove('open');}}
+
+if(!speechSupported){el('btnMicEdit').classList.add('unavailable');el('btnMicEdit').addEventListener('click',function(){el('voiceNoSupportEdit').style.display='block';});}
+else{el('btnMicEdit').addEventListener('click',function(){if(isRecEdit){stopRecEdit(true);}else{startRecEdit();}});}
+
+el('btnVoiceInsertEdit').addEventListener('click',function(){var txt=el('voiceTextEdit').textContent.trim();if(!txt)return;var r=el('editInstrucao');r.value=r.value?(r.value.trim()+'\n'+txt):txt;el('voicePreviewEdit').classList.remove('open');el('voiceFeedbackEdit').textContent='';});
+el('btnVoiceDiscardEdit').addEventListener('click',function(){el('voicePreviewEdit').classList.remove('open');el('voiceFeedbackEdit').textContent='';});
+el('btnVoiceReviewEdit').addEventListener('click',function(){var txt=el('voiceTextEdit').textContent.trim();if(!txt)return;if(!decryptedKey){showPwModal(function(){reviewVoiceEdit(txt);});}else{reviewVoiceEdit(txt);}});
+
+async function reviewVoiceEdit(txt){
+var fb=el('voiceFeedbackEdit'),btn=el('btnVoiceReviewEdit');btn.disabled=true;
+fb.innerHTML='<span class="spinner"></span> Revisando áudio...';fb.style.color='#2563eb';
+var ctx=v('editResumoOriginal').substring(0,300);
+var prompt='Você é assistente de um escrivão da Polícia Federal de Bauru/SP.\n';
+prompt+='Revise o texto abaixo, que foi ditado por voz por um policial como instrução de alteração de um resumo de ocorrência.\n';
+prompt+='Corrija gramática, pontuação e torne a linguagem mais clara e coesa.\n';
+prompt+='NÃO altere fatos, nomes, números, placas ou informações substantivas.\n';
+prompt+='Este texto é uma INSTRUÇÃO de retificação — mantenha o tom de instrução/comando (ex: "corrigir X para Y", "acrescentar que...").\n';
+prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
+if(ctx)prompt+='CONTEXTO (trecho do resumo original):\n'+ctx+'...\n\n';
+prompt+='TEXTO DITADO:\n'+txt;
+try{var revised=await callGemini(prompt);el('voiceTextEdit').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertEdit').textContent='Inserir revisado';el('btnVoiceReviewEdit').style.display='none';}
+catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
+btn.disabled=false;
+}
+
+function autoInsertEditVoice(){
+if(el('voicePreviewEdit').classList.contains('open')){var vt=el('voiceTextEdit').textContent.trim();if(vt&&vt!=='Ouvindo...'){var r=el('editInstrucao');r.value=r.value?(r.value.trim()+'\n'+vt):vt;el('voicePreviewEdit').classList.remove('open');}}
+}
+
 // ===== BUILD DATA =====
 var RFB='Depósito da Receita Federal - Bauru/SP, Rua Halim Aidar, Quadra 4, s/n - Vila Industrial, Bauru – SP, (14) 3042-9892';
 
@@ -595,6 +652,8 @@ el('revisionArea').style.display='block';el('finalActions').style.display='none'
 el('revisionText').value='';
 el('revisionCount').textContent=revisionNum>0?'Revisão #'+revisionNum:'';
 el('resultLabel').textContent=revisionNum>0?'Resumo revisado (#'+revisionNum+')':'Resumo gerado';
+el('voicePreviewRev').classList.remove('open');
+try{localStorage.setItem('fla_resumo',JSON.stringify({text:text,rev:revisionNum,ts:Date.now()}));}catch(e){}
 }
 
 // PROMPTS
@@ -714,7 +773,9 @@ el('btnGerar').addEventListener('click',function(){
 // Auto-insert pending voice text
 if(el('voicePreview').classList.contains('open')){var vt=el('voiceText').textContent.trim();if(vt&&vt!=='Ouvindo...'){var obs=el('observacoes');obs.value=obs.value?(obs.value.trim()+'\n'+vt):vt;el('voicePreview').classList.remove('open');}}
 D.observacoes=v('observacoes');if(EK==='COLE_AQUI'){executarGeracao();return;}if(decryptedKey){executarGeracao();return;}showPwModal(function(){executarGeracao();});});
-el('editGerar').addEventListener('click',function(){var orig=v('editResumoOriginal'),instr=v('editInstrucao');if(!orig||!instr){shake(this);return;}if(EK==='COLE_AQUI'){executarEdicao();return;}if(decryptedKey){executarEdicao();return;}showPwModal(function(){executarEdicao();});});
+el('editGerar').addEventListener('click',function(){
+autoInsertEditVoice();
+var orig=v('editResumoOriginal'),instr=v('editInstrucao');if(!orig||!instr){shake(this);return;}if(EK==='COLE_AQUI'){executarEdicao();return;}if(decryptedKey){executarEdicao();return;}showPwModal(function(){executarEdicao();});});
 el('btnCopiar').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;navigator.clipboard.writeText(t).then(function(){el('feedback').textContent='Copiado!';el('feedback').className='feedback fb-ok';setTimeout(function(){el('feedback').textContent='';},2000);});});
 
 el('btnWhatsApp').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;var url='https://wa.me/551433123124?text='+encodeURIComponent(t);window.open(url,'_blank');});
@@ -725,11 +786,30 @@ D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',m
 document.querySelectorAll('.option-btn.selected,.sub-opt.selected').forEach(function(b){b.classList.remove('selected');});
 el('subDrogas').classList.remove('open');el('cedulaForm').classList.remove('open');el('cedList').innerHTML='';
 el('motivoDetail').classList.remove('open');el('resultado').textContent='';el('feedback').textContent='';
-el('revisionText').value='';el('voicePreview').classList.remove('open');el('voicePreviewRev').classList.remove('open');
-revisionNum=0;currentMode='new';goStep(0);
+el('revisionText').value='';el('voicePreview').classList.remove('open');el('voicePreviewRev').classList.remove('open');el('voicePreviewEdit').classList.remove('open');
+revisionNum=0;currentMode='new';
+try{localStorage.removeItem('fla_resumo');}catch(e){}
+goStep(0);
 });
 
-goStep(0);
+// RECOVERY: restaurar resumo se página recarregou
+(function(){
+try{
+var saved=localStorage.getItem('fla_resumo');
+if(!saved){goStep(0);return;}
+var d=JSON.parse(saved);
+// Expirar após 24h
+if(Date.now()-d.ts>86400000){localStorage.removeItem('fla_resumo');goStep(0);return;}
+revisionNum=d.rev||0;
+showResult();
+el('resultado').textContent=d.text;
+el('resultLabel').textContent='Resumo recuperado';
+el('feedback').textContent='Resumo restaurado após recarregamento.';el('feedback').className='feedback fb-ok';
+el('revisionArea').style.display='block';el('finalActions').style.display='none';
+el('revisionText').value='';
+el('revisionCount').textContent=revisionNum>0?'Revisão #'+revisionNum:'';
+}catch(e){goStep(0);}
+})();
 </script>
 </body>
 </html>
