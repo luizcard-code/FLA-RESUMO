@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -59,7 +58,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .input-group input,.input-group textarea{width:100%;padding:12px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:16px;font-family:inherit;-webkit-appearance:none;transition:border-color .2s}
 .input-group input:focus,.input-group textarea:focus{outline:none;border-color:#2563eb}
 .input-group textarea{resize:vertical;min-height:100px}
-.input-hint{font-size:12px;color:#999;margin-top:4px}
 .nav-row{display:flex;gap:10px;margin-top:20px}
 .btn-nav{flex:1;padding:14px;border:none;border-radius:10px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .btn-nav:active{transform:scale(.98)}
@@ -89,12 +87,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .modal-box input:focus{outline:none;border-color:#2563eb}
 .modal-box .btn-nav{margin-top:16px;width:100%}
 .modal-box .fb{font-size:13px;margin-top:8px;min-height:20px}
-.dest-auto-msg{margin-top:12px;padding:12px 14px;background:#eff6ff;border-radius:8px;font-size:13px;color:#1e3a5f;line-height:1.5}
 .motivo-detail{margin-top:10px;display:none}
 .motivo-detail.open{display:block}
 .version-tag{text-align:center;font-size:10px;color:#ccc;margin-top:16px}
-
-/* ===== NEW: Revision area ===== */
 .revision-area{margin-top:18px;padding:18px 16px;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:10px;animation:fadeIn .25s ease}
 .revision-area label{font-size:13px;font-weight:600;color:#92400e;display:block;margin-bottom:6px}
 .revision-area textarea{width:100%;padding:12px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:15px;font-family:inherit;resize:vertical;min-height:80px;-webkit-appearance:none;transition:border-color .2s}
@@ -106,46 +101,52 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .btn-send-revision:disabled{opacity:.5;cursor:not-allowed}
 .btn-accept{background:#16a34a;color:#fff}
 .revision-count{font-size:11px;color:#92400e;margin-top:6px;text-align:right}
-
-/* ===== NEW: Mode selector (step0) ===== */
-.mode-card{background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:24px 20px;margin-bottom:16px;animation:fadeIn .25s ease}
 .mode-btn{display:flex;align-items:center;gap:14px;padding:18px 16px;border:2px solid #e5e7eb;border-radius:12px;background:#fff;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;text-align:left;width:100%;margin-bottom:10px;-webkit-tap-highlight-color:transparent}
 .mode-btn:active{transform:scale(.98)}
 .mode-btn:hover{border-color:#2563eb;background:#eff6ff}
 .mode-icon{font-size:24px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#f3f4f6;border-radius:10px;flex-shrink:0}
 .mode-text{display:flex;flex-direction:column;gap:2px}
 .mode-text span{font-size:12px;color:#888;font-weight:400}
-
-/* ===== NEW: Edit existing card ===== */
+.mode-info{margin-top:8px;padding:12px 14px;background:#f0f7ff;border:1px solid #dbeafe;border-radius:8px;font-size:13px;color:#1e3a5f;line-height:1.5}
 .edit-existing-card{display:none;background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:24px 20px;margin-bottom:16px;animation:fadeIn .25s ease}
 .edit-existing-card.active{display:block}
+.obs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.obs-header label{font-size:13px;font-weight:500;color:#555;margin:0}
+.btn-mic{display:flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;background:#fff;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;color:#555;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn-mic:active{transform:scale(.98)}
+.btn-mic.recording{border-color:#dc2626;background:#fef2f2;color:#dc2626;animation:pulse 1.5s ease infinite}
+.btn-mic.unavailable{opacity:.4;cursor:not-allowed}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3)}50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}}
+.voice-preview{display:none;margin-top:10px;padding:14px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;animation:fadeIn .25s ease}
+.voice-preview.open{display:block}
+.voice-preview-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.voice-preview-text{font-size:14px;line-height:1.6;min-height:40px;color:#333;white-space:pre-wrap}
+.voice-preview-text.listening{color:#999;font-style:italic}
+.voice-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.btn-voice{padding:10px 14px;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s}
+.btn-voice:active{transform:scale(.98)}
+.btn-voice:disabled{opacity:.5;cursor:not-allowed}
+.btn-voice-insert{background:#16a34a;color:#fff}
+.btn-voice-review{background:#2563eb;color:#fff}
+.btn-voice-discard{background:#f3f4f6;color:#555}
+.voice-feedback{font-size:12px;margin-top:6px;min-height:18px;font-weight:500}
+.voice-no-support{margin-top:8px;padding:10px 14px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-size:12px;color:#991b1b;display:none}
 </style>
-
 </head>
 <body>
-
 <div class="topbar"><h1>REGISTRO DE OCORRÊNCIA</h1><div class="topbar-sub" id="topSub">Polícia Federal — Bauru/SP</div></div>
-
 <div class="progress" id="progress"></div>
-
 <div class="container">
 
-<!-- STEP 0: MODE SELECTOR -->
-
+<!-- STEP 0 -->
 <div class="step-card" id="step0">
 <div class="step-question" style="margin-bottom:16px">Como deseja prosseguir?</div>
-<button class="mode-btn" id="modeNew">
-  <div class="mode-icon">📝</div>
-  <div class="mode-text"><strong>Nova ocorrência</strong><span>Preencher formulário completo</span></div>
-</button>
-<button class="mode-btn" id="modeEdit">
-  <div class="mode-icon">✏️</div>
-  <div class="mode-text"><strong>Editar resumo existente</strong><span>Colar resumo anterior e solicitar alterações</span></div>
-</button>
+<button class="mode-btn" id="modeNew"><div class="mode-icon">📝</div><div class="mode-text"><strong>Nova ocorrência</strong><span>Preencher formulário completo</span></div></button>
+<button class="mode-btn" id="modeEdit"><div class="mode-icon">✏️</div><div class="mode-text"><strong>Editar resumo existente</strong><span>Colar resumo anterior e solicitar alterações</span></div></button>
+<div class="mode-info">📋 <strong>7 etapas rápidas</strong> — ao final, campo de observações com opção de <strong>ditado por voz</strong>.</div>
 </div>
 
 <!-- EDIT EXISTING -->
-
 <div class="edit-existing-card" id="editExisting">
 <div class="step-number">Edição de resumo</div>
 <div class="step-question">Cole o resumo e descreva a alteração</div>
@@ -155,10 +156,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="nav-row"><button class="btn-nav btn-back" id="editBack">Voltar</button><button class="btn-nav btn-generate" id="editGerar">Gerar Revisão</button></div>
 </div>
 
-<!-- STEP 1: FORÇA -->
-
+<!-- STEP 1 -->
 <div class="step-card" id="step1">
-<div class="step-number">Passo 1 de 8</div>
+<div class="step-number">Passo 1 de 7</div>
 <div class="step-question">Qual a força policial?</div>
 <div class="step-hint">Selecione uma opção</div>
 <div class="option-grid" id="forcaOpts">
@@ -174,10 +174,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="nav-row"><button class="btn-nav btn-back" id="back1">Voltar</button><button class="btn-nav btn-next" id="next1">Próximo</button></div>
 </div>
 
-<!-- STEP 2: MOTIVO -->
-
+<!-- STEP 2 -->
 <div class="step-card" id="step2">
-<div class="step-number">Passo 2 de 8</div>
+<div class="step-number">Passo 2 de 7</div>
 <div class="step-question">Motivo da abordagem</div>
 <div class="step-hint">Selecione um ou mais motivos (fundada suspeita)</div>
 <div class="option-grid" id="motivoOpts">
@@ -197,10 +196,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(1)">Voltar</button><button class="btn-nav btn-next" id="next2">Próximo</button></div>
 </div>
 
-<!-- STEP 3: LOCAL -->
-
+<!-- STEP 3 -->
 <div class="step-card" id="step3">
-<div class="step-number">Passo 3 de 8</div>
+<div class="step-number">Passo 3 de 7</div>
 <div class="step-question">Onde foi a abordagem?</div>
 <div class="step-hint">Preencha os três campos</div>
 <div class="input-group"><label>KM (aproximado)</label><input type="text" id="km" placeholder="Ex: 354" inputmode="numeric"></div>
@@ -209,20 +207,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(2)">Voltar</button><button class="btn-nav btn-next" id="next3">Próximo</button></div>
 </div>
 
-<!-- STEP 4: PLACA -->
-
+<!-- STEP 4 -->
 <div class="step-card" id="step4">
-<div class="step-number">Passo 4 de 8</div>
+<div class="step-number">Passo 4 de 7</div>
 <div class="step-question">Placa do veículo</div>
 <div class="step-hint">Formato Mercosul ou antigo</div>
 <div class="input-group"><input type="text" id="placa" placeholder="ABC1D23" maxlength="7" style="text-transform:uppercase;font-size:24px;text-align:center;letter-spacing:4px;font-weight:700"></div>
 <div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(3)">Voltar</button><button class="btn-nav btn-next" id="next4">Próximo</button></div>
 </div>
 
-<!-- STEP 5: MATERIAL -->
-
+<!-- STEP 5 -->
 <div class="step-card" id="step5">
-<div class="step-number">Passo 5 de 8</div>
+<div class="step-number">Passo 5 de 7</div>
 <div class="step-question">O que foi apreendido?</div>
 <div class="step-hint">Selecione uma ou mais opções</div>
 <div class="section-divider">Mercadorias</div>
@@ -257,10 +253,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(4)">Voltar</button><button class="btn-nav btn-next" id="next5">Próximo</button></div>
 </div>
 
-<!-- STEP 6: IRREGULARIDADE -->
-
+<!-- STEP 6 -->
 <div class="step-card" id="step6">
-<div class="step-number">Passo 6 de 8</div>
+<div class="step-number">Passo 6 de 7</div>
 <div class="step-question">Qual a irregularidade?</div>
 <div class="step-hint">Selecione uma opção</div>
 <div class="option-grid" id="irregOpts">
@@ -271,39 +266,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(5)">Voltar</button><button class="btn-nav btn-next" id="next6">Próximo</button></div>
 </div>
 
-<!-- STEP 7: DESTINO -->
-
+<!-- STEP 7: OBSERVAÇÕES + VOZ -->
 <div class="step-card" id="step7">
-<div class="step-number">Passo 7 de 8</div>
-<div class="step-question">Destino das mercadorias e veículo?</div>
-<div class="step-hint" id="destHint">Selecione uma opção</div>
-<div class="dest-auto-msg" id="destAuto" style="display:none"></div>
-<div class="option-grid" id="destOpts">
-<button class="option-btn" data-val="rfb_direto"><span class="radio"></span>Entregar direto na RFB<br><small style="color:#888;font-size:12px">Caso mais comum</small></button>
-<button class="option-btn" data-val="pf_primeiro"><span class="radio"></span>Apresentar na PF primeiro<br><small style="color:#888;font-size:12px">Encaminhar à RFB no dia seguinte</small></button>
-</div>
-<div class="nav-row"><button class="btn-nav btn-back" id="back7">Voltar</button><button class="btn-nav btn-next" id="next7">Próximo</button></div>
-</div>
-
-<!-- STEP 8: OBSERVAÇÕES -->
-
-<div class="step-card" id="step8">
-<div class="step-number">Passo 8 de 8</div>
+<div class="step-number">Passo 7 de 7</div>
 <div class="step-question">Alguma observação?</div>
-<div class="step-hint">Opcional — se preenchido, será incorporado ao resumo pela IA</div>
-<div class="input-group"><textarea id="observacoes" placeholder="Ex: mercadoria oculta no assoalho, condutor apresentou NF vencida, veículo com fundo falso, tentativa de fuga, motorista embriagado..."></textarea></div>
-<div class="nav-row"><button class="btn-nav btn-back" onclick="goStep(7)">Voltar</button><button class="btn-nav btn-generate" id="btnGerar">Gerar Resumo</button></div>
+<div class="step-hint">Opcional — digite ou dite por voz. Será incorporado ao resumo pela IA.</div>
+<div class="input-group" style="margin-bottom:0">
+<div class="obs-header">
+  <label>Observações</label>
+  <button class="btn-mic" id="btnMic"><span class="mic-icon">🎤</span> <span id="micLabel">Ditar</span></button>
+</div>
+<textarea id="observacoes" placeholder="Ex: mercadoria oculta no assoalho, condutor apresentou NF vencida, veículo com fundo falso..."></textarea>
+</div>
+<div class="voice-no-support" id="voiceNoSupport">Seu navegador não suporta ditado por voz. Use o campo de texto acima.</div>
+<div class="voice-preview" id="voicePreview">
+<div class="voice-preview-label">Transcrição</div>
+<div class="voice-preview-text" id="voiceText">Ouvindo...</div>
+<div class="voice-actions" id="voiceActions" style="display:none">
+  <button class="btn-voice btn-voice-insert" id="btnVoiceInsert">Inserir</button>
+  <button class="btn-voice btn-voice-review" id="btnVoiceReview">Revisar áudio com IA</button>
+  <button class="btn-voice btn-voice-discard" id="btnVoiceDiscard">Descartar</button>
+</div>
+<div class="voice-feedback" id="voiceFeedback"></div>
+</div>
+<div class="nav-row"><button class="btn-nav btn-back" id="back7">Voltar</button><button class="btn-nav btn-generate" id="btnGerar">Gerar Resumo</button></div>
 </div>
 
 <!-- RESULTADO -->
-
 <div class="result-card" id="resultCard">
 <div class="result-label" id="resultLabel">Resumo gerado</div>
 <div class="result-box" id="resultado"></div>
 <div class="feedback" id="feedback"></div>
-
-<!-- Revision area (visible while not accepted) -->
-
 <div class="revision-area" id="revisionArea">
   <label>Retificação / Complemento</label>
   <textarea id="revisionText" placeholder="Ex: corrigir a placa para XYZ9A99, acrescentar que o condutor tentou fuga a pé..."></textarea>
@@ -313,20 +306,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
   <div class="revision-count" id="revisionCount"></div>
 </div>
-
-<!-- Final actions (visible after accepting) -->
-
 <div class="result-actions" id="finalActions" style="display:none">
-  <button class="btn-action btn-copy" id="btnCopiar">Copiar texto</button>
-  <button class="btn-action btn-new" id="btnNovo">Nova ocorrência</button>
+  <button class="btn-action btn-copy" id="btnCopiar">Copiar</button>
+  <button class="btn-action" id="btnWhatsApp" style="border-color:#25d366;color:#25d366">WhatsApp</button>
+  <button class="btn-action btn-new" id="btnNovo">Nova</button>
 </div>
 </div>
 
-<div class="version-tag">v2.0 — PF Bauru</div>
+<div class="version-tag">v2.1 — PF Bauru</div>
 </div>
 
 <!-- MODAL SENHA -->
-
 <div class="modal-overlay" id="pwOverlay">
 <div class="modal-box">
 <h2>Acesso protegido</h2>
@@ -337,8 +327,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<!-- MODAL ADMIN (segredo) -->
-
+<!-- MODAL ADMIN -->
 <div class="modal-overlay" id="adminOverlay">
 <div class="modal-box">
 <h2>Chave API (admin)</h2>
@@ -348,159 +337,178 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <script>
-// ============================================================
-// CHAVE CRIPTOGRAFADA
-// ============================================================
 var EK='e2102277cb453ba42ef4fd93854f35d2:9f8a727e326f21bf088858b8:7e6803a9dd12f71cba93c9fa8c5679eba561fbdb6565d2527a9e72d3b10cdee0bf1061b3f1befc883d1990d332bbc41497babfc01686ea';
-// ============================================================
-
-var TOTAL=8,cur=0,decryptedKey='',revisionNum=0,currentMode='new';
+var TOTAL=7,cur=0,decryptedKey='',revisionNum=0,currentMode='new';
 function el(id){return document.getElementById(id);}
 function v(id){return el(id).value.trim();}
-var D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
+var D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',observacoes:''};
 
-// ===== CRYPTO =====
+// CRYPTO
 function hex2buf(h){var a=[];for(var i=0;i<h.length;i+=2)a.push(parseInt(h.substr(i,2),16));return new Uint8Array(a);}
 async function deriveKey(pw,salt){var enc=new TextEncoder();var km=await crypto.subtle.importKey('raw',enc.encode(pw),{name:'PBKDF2'},false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);}
-async function decryptKey(pw){
-if(EK==='COLE_AQUI')return '';
-var parts=EK.split(':');if(parts.length!==3)return '';
-var salt=hex2buf(parts[0]),iv=hex2buf(parts[1]),data=hex2buf(parts[2]);
-try{var key=await deriveKey(pw,salt);var dec=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,data);return new TextDecoder().decode(dec);}catch(e){return '';}
-}
+async function decryptKey(pw){if(EK==='COLE_AQUI')return '';var parts=EK.split(':');if(parts.length!==3)return '';var salt=hex2buf(parts[0]),iv=hex2buf(parts[1]),data=hex2buf(parts[2]);try{var key=await deriveKey(pw,salt);var dec=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,data);return new TextDecoder().decode(dec);}catch(e){return '';}}
 
-// ===== PASSWORD MODAL =====
-function showPwModal(cb){
-el('pwInput').value='';el('pwFb').textContent='';
-el('pwOverlay').classList.add('open');
-el('pwInput').focus();
-el('pwSubmit').onclick=async function(){
-var pw=el('pwInput').value.trim();
-if(!pw){el('pwFb').textContent='Digite a senha.';el('pwFb').style.color='#dc2626';return;}
-el('pwFb').textContent='Verificando...';el('pwFb').style.color='#2563eb';
-var k=await decryptKey(pw);
-if(k){decryptedKey=k;el('pwOverlay').classList.remove('open');cb();}
-else{el('pwFb').textContent='Senha incorreta.';el('pwFb').style.color='#dc2626';el('pwInput').value='';el('pwInput').focus();}
-};
-el('pwInput').onkeydown=function(e){if(e.key==='Enter')el('pwSubmit').click();};
-}
+// PASSWORD
+function showPwModal(cb){el('pwInput').value='';el('pwFb').textContent='';el('pwOverlay').classList.add('open');el('pwInput').focus();el('pwSubmit').onclick=async function(){var pw=el('pwInput').value.trim();if(!pw){el('pwFb').textContent='Digite a senha.';el('pwFb').style.color='#dc2626';return;}el('pwFb').textContent='Verificando...';el('pwFb').style.color='#2563eb';var k=await decryptKey(pw);if(k){decryptedKey=k;el('pwOverlay').classList.remove('open');cb();}else{el('pwFb').textContent='Senha incorreta.';el('pwFb').style.color='#dc2626';el('pwInput').value='';el('pwInput').focus();}};el('pwInput').onkeydown=function(e){if(e.key==='Enter')el('pwSubmit').click();};}
 
-// ===== ADMIN SECRET: 5 taps no subtítulo =====
+// ADMIN
 var adminTaps=0,adminTimer=null;
-el('topSub').addEventListener('click',function(){
-adminTaps++;
-clearTimeout(adminTimer);
-adminTimer=setTimeout(function(){adminTaps=0;},2000);
-if(adminTaps>=5){
-adminTaps=0;
-if(decryptedKey){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');}
-else{showPwModal(function(){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');});}
-}
-});
+el('topSub').addEventListener('click',function(){adminTaps++;clearTimeout(adminTimer);adminTimer=setTimeout(function(){adminTaps=0;},2000);if(adminTaps>=5){adminTaps=0;if(decryptedKey){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');}else{showPwModal(function(){el('adminKeyDisplay').textContent=decryptedKey;el('adminOverlay').classList.add('open');});}}});
 
-// ===== PROGRESS =====
-function renderProg(){
-var h='';
-for(var i=1;i<=TOTAL;i++){
-  var c='progress-dot';
-  if(cur===0){/* step0 or edit mode: all grey */}
-  else if(i<cur)c+=' done';
-  else if(i===cur)c+=' active';
-  h+='<div class="'+c+'"></div>';
-}
-el('progress').innerHTML=h;
-}
+// PROGRESS
+function renderProg(){var h='';for(var i=1;i<=TOTAL;i++){var c='progress-dot';if(cur>=1){if(i<cur)c+=' done';else if(i===cur)c+=' active';}h+='<div class="'+c+'"></div>';}el('progress').innerHTML=h;}
 
-// ===== NAV =====
-function hideAll(){
-el('step0').classList.remove('active');
-el('editExisting').classList.remove('active');
-for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.remove('active');}
-el('resultCard').classList.remove('active');
-}
-
-function goStep(n){
-cur=n;
-hideAll();
-if(n===0){el('step0').classList.add('active');}
-else{el('step'+n).classList.add('active');}
-renderProg();
-window.scrollTo({top:0,behavior:'smooth'});
-if(n===7)updateDest();
-}
-
-function showEditMode(){
-cur=0;
-hideAll();
-el('editExisting').classList.add('active');
-renderProg();
-window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function showResult(){
-hideAll();
-el('resultCard').classList.add('active');
-document.querySelectorAll('.progress-dot').forEach(function(d){d.classList.add('done');d.classList.remove('active');});
-}
-
+// NAV
+function hideAll(){el('step0').classList.remove('active');el('editExisting').classList.remove('active');for(var i=1;i<=TOTAL;i++){var c=el('step'+i);if(c)c.classList.remove('active');}el('resultCard').classList.remove('active');}
+function goStep(n){cur=n;hideAll();if(n===0)el('step0').classList.add('active');else el('step'+n).classList.add('active');renderProg();window.scrollTo({top:0,behavior:'smooth'});}
+function showEditMode(){cur=0;hideAll();el('editExisting').classList.add('active');renderProg();window.scrollTo({top:0,behavior:'smooth'});}
+function showResult(){hideAll();el('resultCard').classList.add('active');document.querySelectorAll('.progress-dot').forEach(function(d){d.classList.add('done');d.classList.remove('active');});}
 function shake(b){b.style.animation='none';b.offsetHeight;b.style.animation='shakeX .4s ease';setTimeout(function(){b.style.animation='';},500);}
-
 var ss=document.createElement('style');ss.textContent='@keyframes shakeX{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}';document.head.appendChild(ss);
 
-// ===== MODE SELECTOR =====
+// MODE
 el('modeNew').addEventListener('click',function(){currentMode='new';goStep(1);});
 el('modeEdit').addEventListener('click',function(){currentMode='edit';showEditMode();});
 el('editBack').addEventListener('click',function(){goStep(0);});
 el('back1').addEventListener('click',function(){goStep(0);});
 
-// ===== STEP LOGIC =====
+// STEPS
 (function(){var bs=el('forcaOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.forca=b.dataset.val;});});})();
-
 (function(){var bs=el('motivoOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('selected');D.motivos=[];bs.forEach(function(x){if(x.classList.contains('selected'))D.motivos.push(x.dataset.val);});el('motivoDetail').classList.toggle('open',D.motivos.length>0);});});})();
-
 el('placa').addEventListener('input',function(){this.value=this.value.toUpperCase();});
-
 var mercBtns=document.querySelectorAll('#mercOpts .option-btn');
 mercBtns.forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('selected');D.mercs=[];mercBtns.forEach(function(x){if(x.classList.contains('selected'))D.mercs.push(x.dataset.val);});});});
-
 el('btnDrogas').addEventListener('click',function(){this.classList.toggle('selected');var o=this.classList.contains('selected');el('subDrogas').classList.toggle('open',o);if(!o){D.drogas=[];el('subDrogas').querySelectorAll('.sub-opt').forEach(function(s){s.classList.remove('selected');});}});
-
 el('subDrogas').querySelectorAll('.sub-opt').forEach(function(s){s.addEventListener('click',function(){s.classList.toggle('selected');D.drogas=[];el('subDrogas').querySelectorAll('.sub-opt.selected').forEach(function(x){D.drogas.push(x.dataset.val);});});});
-
 el('btnCedulas').addEventListener('click',function(){this.classList.toggle('selected');el('cedulaForm').classList.toggle('open',this.classList.contains('selected'));if(!this.classList.contains('selected')){D.cedulas=[];renderCed();}});
-
 el('btnAddCed').addEventListener('click',function(){var den=el('cedDenom').value,qtd=parseInt(el('cedQtd').value)||1,ser=el('cedSerie').value.trim();D.cedulas.push({d:den,q:qtd,s:ser});el('cedQtd').value='1';el('cedSerie').value='';renderCed();});
-
 function renderCed(){var c=el('cedList');if(!D.cedulas.length){c.innerHTML='';return;}var h='';D.cedulas.forEach(function(cd,i){h+='<div class="cedula-item"><span>'+cd.q+'x R$'+cd.d+(cd.s?' — Série: '+cd.s:'')+'</span><button onclick="remCed('+i+')">&times;</button></div>';});c.innerHTML=h;}
 function remCed(i){D.cedulas.splice(i,1);renderCed();}
-
 (function(){var bs=el('irregOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.irregularidade=b.dataset.val;});});})();
 
 function hasMerc(){return D.mercs.length>0;}
 function hasPF(){return D.drogas.length>0||D.cedulas.length>0;}
-function onlyPF(){return !hasMerc()&&hasPF();}
 
-function updateDest(){
-if(onlyPF()){el('destAuto').style.display='block';el('destAuto').textContent='Drogas e/ou cédulas falsas são apresentadas diretamente na PF. Destino definido automaticamente.';el('destOpts').style.display='none';el('destHint').style.display='none';D.destino='pf_direto';}
-else{el('destAuto').style.display='none';el('destOpts').style.display='flex';el('destHint').style.display='block';D.destino='';el('destOpts').querySelectorAll('.option-btn').forEach(function(b){b.classList.remove('selected');});}
-}
-
-(function(){var bs=el('destOpts').querySelectorAll('.option-btn');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');D.destMerc=b.dataset.val;D.destino=b.dataset.val;});});})();
-
-el('back7').addEventListener('click',function(){goStep(hasMerc()?6:5);});
 el('next1').addEventListener('click',function(){if(!D.forca){shake(this);return;}goStep(2);});
 el('next2').addEventListener('click',function(){if(!D.motivos.length){shake(this);return;}D.motivoDetalhe=v('motivoDetalhe');goStep(3);});
 el('next3').addEventListener('click',function(){D.km=v('km');D.rodovia=v('rodovia');D.municipio=v('municipio');if(!D.km||!D.rodovia||!D.municipio){shake(this);return;}goStep(4);});
 el('next4').addEventListener('click',function(){D.placa=v('placa').toUpperCase();if(!D.placa){shake(this);return;}goStep(5);});
-el('next5').addEventListener('click',function(){if(!D.mercs.length&&!D.drogas.length&&!D.cedulas.length){shake(this);return;}if(!hasMerc()){D.irregularidade='';goStep(7);return;}goStep(6);});
+el('next5').addEventListener('click',function(){if(!D.mercs.length&&!D.drogas.length&&!D.cedulas.length){shake(this);return;}if(hasMerc()){goStep(6);}else{D.irregularidade='';goStep(7);}});
 el('next6').addEventListener('click',function(){if(!D.irregularidade){shake(this);return;}goStep(7);});
-el('next7').addEventListener('click',function(){if(!D.destino){shake(this);return;}goStep(8);});
+el('back7').addEventListener('click',function(){goStep(hasMerc()?6:5);});
+
+// ===== VOICE DICTATION =====
+var SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+var speechSupported=!!SpeechRec;
+var recognition=null,isRecording=false,finalTranscript='',interimTranscript='',shouldRestart=false;
+
+if(!speechSupported){
+el('btnMic').classList.add('unavailable');
+el('btnMic').addEventListener('click',function(){el('voiceNoSupport').style.display='block';});
+}else{
+recognition=new SpeechRec();
+recognition.lang='pt-BR';
+recognition.interimResults=true;
+recognition.continuous=false;
+recognition.maxAlternatives=1;
+
+recognition.onresult=function(e){
+interimTranscript='';
+for(var i=e.resultIndex;i<e.results.length;i++){
+if(e.results[i].isFinal){finalTranscript+=e.results[i][0].transcript+' ';}
+else{interimTranscript+=e.results[i][0].transcript;}
+}
+var display=finalTranscript+(interimTranscript?' '+interimTranscript:'');
+el('voiceText').textContent=display||'Ouvindo...';
+el('voiceText').classList.toggle('listening',!finalTranscript&&!interimTranscript);
+};
+
+recognition.onend=function(){
+if(shouldRestart&&isRecording){try{recognition.start();}catch(e){}return;}
+stopRecording(false);
+};
+
+recognition.onerror=function(e){
+if(e.error==='no-speech'&&isRecording&&shouldRestart){try{recognition.start();}catch(ex){}return;}
+if(e.error==='not-allowed'){el('voiceFeedback').textContent='Permissão de microfone negada.';el('voiceFeedback').style.color='#dc2626';}
+stopRecording(false);
+};
+}
+
+function startRecording(){
+if(!speechSupported)return;
+finalTranscript='';interimTranscript='';
+isRecording=true;shouldRestart=true;
+el('btnMic').classList.add('recording');
+el('micLabel').textContent='Parar';
+el('voicePreview').classList.add('open');
+el('voiceText').textContent='Ouvindo...';
+el('voiceText').classList.add('listening');
+el('voiceActions').style.display='none';
+el('voiceFeedback').textContent='';
+try{recognition.start();}catch(e){}
+}
+
+function stopRecording(manual){
+isRecording=false;shouldRestart=false;
+el('btnMic').classList.remove('recording');
+el('micLabel').textContent='Ditar';
+if(manual){try{recognition.stop();}catch(e){}}
+var txt=(finalTranscript+interimTranscript).trim();
+if(txt){
+el('voiceText').textContent=txt;
+el('voiceText').classList.remove('listening');
+el('voiceActions').style.display='flex';
+}else{
+el('voicePreview').classList.remove('open');
+}
+}
+
+el('btnMic').addEventListener('click',function(){
+if(!speechSupported)return;
+if(isRecording){stopRecording(true);}else{startRecording();}
+});
+
+el('btnVoiceInsert').addEventListener('click',function(){
+var txt=el('voiceText').textContent.trim();if(!txt)return;
+var obs=el('observacoes');
+obs.value=obs.value?(obs.value.trim()+'\n'+txt):txt;
+el('voicePreview').classList.remove('open');el('voiceFeedback').textContent='';
+});
+
+el('btnVoiceDiscard').addEventListener('click',function(){
+el('voicePreview').classList.remove('open');el('voiceFeedback').textContent='';
+});
+
+el('btnVoiceReview').addEventListener('click',function(){
+var txt=el('voiceText').textContent.trim();if(!txt)return;
+if(!decryptedKey){showPwModal(function(){reviewVoice(txt);});}
+else{reviewVoice(txt);}
+});
+
+async function reviewVoice(txt){
+var fb=el('voiceFeedback'),btn=el('btnVoiceReview');
+btn.disabled=true;
+fb.innerHTML='<span class="spinner"></span> Revisando...';fb.style.color='#2563eb';
+var prompt='Você é assistente de um escrivão da Polícia Federal.\n';
+prompt+='Revise o texto abaixo, que foi ditado por voz por um policial durante registro de ocorrência.\n';
+prompt+='Corrija gramática, pontuação e torne a linguagem mais formal e coesa.\n';
+prompt+='NÃO altere fatos, nomes, números, placas ou informações substantivas.\n';
+prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
+prompt+='TEXTO DITADO:\n'+txt;
+try{var revised=await callGemini(prompt);el('voiceText').textContent=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';}
+catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
+btn.disabled=false;
+}
 
 // ===== BUILD DATA =====
+var RFB='Depósito da Receita Federal - Bauru/SP, Rua Halim Aidar, Quadra 4, s/n - Vila Industrial, Bauru – SP, (14) 3042-9892';
+
 function buildData(){
 var s={forca:D.forca,motivos_abordagem:D.motivos};
 if(D.motivoDetalhe)s.detalhe_motivo=D.motivoDetalhe;
-s.local='KM '+D.km+', rodovia '+D.rodovia+', município '+D.municipio;s.placa=D.placa;
+s.local='KM '+D.km+', rodovia '+D.rodovia+', município '+D.municipio;
+s.placa=D.placa;
 if(D.mercs.length)s.mercadorias=D.mercs.join(', ');
 if(D.irregularidade)s.irregularidade=D.irregularidade;
 if(D.drogas.length)s.drogas=D.drogas.map(function(d){return 'substância com características de '+d;}).join('; ');
@@ -509,10 +517,16 @@ s.cedulas_detalhamento=D.cedulas.map(function(c){var t=c.q+' cédula(s) de R$ '+
 var tot=D.cedulas.reduce(function(a,c){return a+c.q;},0);var val=D.cedulas.reduce(function(a,c){return a+c.q*parseInt(c.d);},0);
 s.cedulas_resumo=tot+' cédula(s) falsas com valor de face total de R$ '+val.toLocaleString('pt-BR',{minimumFractionDigits:2});
 }
-var RFB='Depósito da Receita Federal - Bauru/SP, Rua Halim Aidar, Quadra 4, s/n - Vila Industrial, Bauru – SP, (14) 3042-9892';
-if(hasMerc()&&hasPF()){s.destino_mercadorias=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';s.destino_drogas_cedulas='Drogas e/ou cédulas falsas apresentadas diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
-else if(onlyPF()){s.destino='Material apreendido apresentado diretamente na Polícia Federal de Bauru/SP para laudo e procedimentos.';}
-else{s.destino=D.destMerc==='rfb_direto'?'Mercadorias e veículo entregues ao '+RFB+'.':'Mercadorias e veículo apresentados na PF Bauru e encaminhados ao '+RFB+' no dia seguinte.';}
+var _hasMerc=D.mercs.length>0,_hasPF=D.drogas.length>0||D.cedulas.length>0;
+if(_hasMerc&&_hasPF){
+s.destino_veiculo='Veículo apreendido permanece na Polícia Federal de Bauru/SP.';
+s.destino_drogas_cedulas='Drogas e/ou cédulas falsas apresentadas na Polícia Federal de Bauru/SP para laudo e procedimentos.';
+s.destino_mercadorias='Mercadorias de descaminho/contrabando encaminhadas ao '+RFB+', onde serão devidamente contabilizadas e verificadas quanto à procedência e tributos.';
+}else if(_hasPF&&!_hasMerc){
+s.destino='Veículo e material apreendido apresentados na Polícia Federal de Bauru/SP para laudo e procedimentos.';
+}else if(_hasMerc&&!_hasPF){
+s.destino='Veículo e mercadorias entregues ao '+RFB+', onde serão devidamente contabilizados e verificados quanto à efetiva procedência e tributos, sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis.';
+}
 if(D.observacoes)s.observacoes=D.observacoes;
 return s;
 }
@@ -526,15 +540,15 @@ if(s.mercadorias)itens.push(s.mercadorias+(s.irregularidade?', '+s.irregularidad
 if(s.drogas)itens.push(s.drogas);
 if(s.cedulas_detalhamento)itens.push(s.cedulas_resumo+' ('+s.cedulas_detalhamento+')');
 p+=': '+itens.join('; ')+'.';
-if(s.mercadorias)p+=' Pelos fatos, apresentaram o veículo e mercadorias à RFB de Bauru/SP, os quais serão devidamente contabilizados e verificados quanto a efetiva procedência e os valores, incluindo-se os tributos, sendo os fatos apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis.';
+p+=' Os fatos foram apresentados à Autoridade Policial nesta Delegacia de Polícia Federal em Bauru/SP, para apuração e adoção das providências cabíveis.';
 parts.push(p);
-if(s.destino_mercadorias){parts.push(s.destino_mercadorias);parts.push(s.destino_drogas_cedulas);}
+if(s.destino_veiculo){parts.push(s.destino_veiculo);parts.push(s.destino_drogas_cedulas);parts.push(s.destino_mercadorias);}
 else if(s.destino)parts.push(s.destino);
 if(s.observacoes)parts.push('Observações: '+s.observacoes);
 return parts.join('\n\n');
 }
 
-// ===== GEMINI API CALL =====
+// GEMINI
 async function callGemini(prompt){
 var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',{
 method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':decryptedKey},
@@ -547,40 +561,19 @@ if(!txt)throw new Error('Resposta vazia do Gemini');
 return txt.trim();
 }
 
-// ===== SHOW RESULT WITH REVISION LOOP =====
+// RESULT + REVISION
 function showResultWithRevision(text,isAI){
 showResult();
 el('resultado').textContent=text;
 el('feedback').textContent=isAI?'Resumo gerado por IA':'Resumo padrão (sem IA).';
 el('feedback').className='feedback '+(isAI?'fb-ok':'fb-err');
-el('revisionArea').style.display='block';
-el('finalActions').style.display='none';
+el('revisionArea').style.display='block';el('finalActions').style.display='none';
 el('revisionText').value='';
 el('revisionCount').textContent=revisionNum>0?'Revisão #'+revisionNum:'';
 el('resultLabel').textContent=revisionNum>0?'Resumo revisado (#'+revisionNum+')':'Resumo gerado';
 }
 
-// ===== REVISION PROMPT BUILDER =====
-function buildRevisionPrompt(currentText,instruction){
-var p='Você é um escrivão da Polícia Federal de Bauru/SP.\n\n';
-p+='Abaixo está o RESUMO ATUAL de um auto de prisão em flagrante, seguido de uma INSTRUÇÃO DE RETIFICAÇÃO/COMPLEMENTO do usuário.\n\n';
-p+='REGRAS:\n';
-p+='1. Aplique EXATAMENTE o que o usuário pede na instrução.\n';
-p+='2. Mantenha todo o restante do texto inalterado — só modifique o necessário.\n';
-p+='3. NÃO invente informações além do que o usuário instruiu.\n';
-p+='4. Mantenha tom formal e jurídico.\n';
-p+='5. Retorne APENAS o texto revisado. Sem títulos, explicações, markdown ou comentários.\n\n';
-p+='RESUMO ATUAL:\n'+currentText+'\n\n';
-p+='INSTRUÇÃO DO USUÁRIO:\n'+instruction;
-return p;
-}
-
-// ===== EDIT EXISTING PROMPT =====
-function buildEditExistingPrompt(originalText,instruction){
-return buildRevisionPrompt(originalText,instruction);
-}
-
-// ===== MAIN GENERATION PROMPT =====
+// PROMPTS
 function buildMainPrompt(sd){
 var prompt='Você é um escrivão da Polícia Federal de Bauru/SP redigindo o resumo de um auto de prisão em flagrante.\n\n';
 prompt+='REGRAS OBRIGATÓRIAS:\n';
@@ -600,130 +593,69 @@ prompt+='DADOS DA OCORRÊNCIA (JSON):\n'+JSON.stringify(sd,null,2);
 return prompt;
 }
 
-// ===== GERAR (nova ocorrência) =====
-async function executarGeracao(){
-D.observacoes=v('observacoes');
-var btn=el('btnGerar');btn.disabled=true;
-revisionNum=0;
-showResult();
-var res=el('resultado'),fb=el('feedback'),sd=buildData();
+function buildRevisionPrompt(currentText,instruction){
+var p='Você é um escrivão da Polícia Federal de Bauru/SP.\n\n';
+p+='Abaixo está o RESUMO ATUAL de um auto de prisão em flagrante, seguido de uma INSTRUÇÃO DE RETIFICAÇÃO/COMPLEMENTO do usuário.\n\n';
+p+='REGRAS:\n1. Aplique EXATAMENTE o que o usuário pede na instrução.\n2. Mantenha todo o restante do texto inalterado — só modifique o necessário.\n3. NÃO invente informações além do que o usuário instruiu.\n4. Mantenha tom formal e jurídico.\n5. Retorne APENAS o texto revisado. Sem títulos, explicações, markdown ou comentários.\n\n';
+p+='RESUMO ATUAL:\n'+currentText+'\n\nINSTRUÇÃO DO USUÁRIO:\n'+instruction;
+return p;
+}
 
+// GERAR (nova)
+async function executarGeracao(){
+D.observacoes=v('observacoes');var btn=el('btnGerar');btn.disabled=true;revisionNum=0;
+showResult();var res=el('resultado'),fb=el('feedback'),sd=buildData();
 if(decryptedKey){
 res.textContent='';fb.innerHTML='<span class="spinner"></span> Gerando resumo com IA...';fb.className='feedback fb-loading';
 el('revisionArea').style.display='none';el('finalActions').style.display='none';
-try{
-var txt=await callGemini(buildMainPrompt(sd));
-showResultWithRevision(txt,true);
-}catch(err){
-showResultWithRevision(buildFallback(),false);
-fb.textContent='Erro: '+err.message+'. Resumo padrão exibido.';fb.className='feedback fb-err';
-}
-}else{
-showResultWithRevision(buildFallback(),false);
-}
+try{var txt=await callGemini(buildMainPrompt(sd));showResultWithRevision(txt,true);}
+catch(err){showResultWithRevision(buildFallback(),false);fb.textContent='Erro: '+err.message+'. Resumo padrão exibido.';fb.className='feedback fb-err';}
+}else{showResultWithRevision(buildFallback(),false);}
 btn.disabled=false;
 }
 
-// ===== GERAR (editar existente) =====
+// GERAR (editar existente)
 async function executarEdicao(){
-var orig=v('editResumoOriginal'),instr=v('editInstrucao');
-var btn=el('editGerar');btn.disabled=true;
-revisionNum=0;currentMode='edit';
-showResult();
-var res=el('resultado'),fb=el('feedback');
-
+var orig=v('editResumoOriginal'),instr=v('editInstrucao');var btn=el('editGerar');btn.disabled=true;revisionNum=0;currentMode='edit';
+showResult();var res=el('resultado'),fb=el('feedback');
 if(decryptedKey){
 res.textContent='';fb.innerHTML='<span class="spinner"></span> Revisando com IA...';fb.className='feedback fb-loading';
 el('revisionArea').style.display='none';el('finalActions').style.display='none';
-try{
-var txt=await callGemini(buildEditExistingPrompt(orig,instr));
-revisionNum=1;
-showResultWithRevision(txt,true);
-}catch(err){
-res.textContent=orig;
-fb.textContent='Erro: '+err.message+'. Texto original mantido.';fb.className='feedback fb-err';
-el('revisionArea').style.display='block';el('finalActions').style.display='none';
-}
-}else{
-res.textContent=orig;
-fb.textContent='Sem IA disponível. Cole a senha primeiro.';fb.className='feedback fb-err';
-el('revisionArea').style.display='block';el('finalActions').style.display='none';
-}
+try{var txt=await callGemini(buildRevisionPrompt(orig,instr));revisionNum=1;showResultWithRevision(txt,true);}
+catch(err){res.textContent=orig;fb.textContent='Erro: '+err.message+'. Texto original mantido.';fb.className='feedback fb-err';el('revisionArea').style.display='block';el('finalActions').style.display='none';}
+}else{res.textContent=orig;fb.textContent='Sem IA disponível.';fb.className='feedback fb-err';el('revisionArea').style.display='block';el('finalActions').style.display='none';}
 btn.disabled=false;
 }
 
-// ===== SEND REVISION =====
+// REVISÃO
 async function enviarRevisao(){
-var instrucao=v('revisionText');
-if(!instrucao){shake(el('btnSendRevision'));return;}
-var currentText=el('resultado').textContent;
-var btn=el('btnSendRevision');btn.disabled=true;
-var fb=el('feedback');
-fb.innerHTML='<span class="spinner"></span> Revisando...';fb.className='feedback fb-loading';
-
-try{
-var txt=await callGemini(buildRevisionPrompt(currentText,instrucao));
-revisionNum++;
-showResultWithRevision(txt,true);
-}catch(err){
-fb.textContent='Erro na revisão: '+err.message;fb.className='feedback fb-err';
-}
+var instrucao=v('revisionText');if(!instrucao){shake(el('btnSendRevision'));return;}
+var currentText=el('resultado').textContent;var btn=el('btnSendRevision');btn.disabled=true;
+var fb=el('feedback');fb.innerHTML='<span class="spinner"></span> Revisando...';fb.className='feedback fb-loading';
+try{var txt=await callGemini(buildRevisionPrompt(currentText,instrucao));revisionNum++;showResultWithRevision(txt,true);}
+catch(err){fb.textContent='Erro na revisão: '+err.message;fb.className='feedback fb-err';}
 btn.disabled=false;
 }
 
-// ===== ACCEPT VERSION =====
-el('btnAccept').addEventListener('click',function(){
-el('revisionArea').style.display='none';
-el('finalActions').style.display='flex';
-el('feedback').textContent='Versão final aceita.';el('feedback').className='feedback fb-ok';
-el('resultLabel').textContent='Versão final';
-});
-
-// ===== SEND REVISION BUTTON =====
-el('btnSendRevision').addEventListener('click',function(){
-if(!decryptedKey){
-showPwModal(function(){enviarRevisao();});
-}else{
-enviarRevisao();
-}
-});
-
-// ===== TRIGGER GERAR (nova ocorrência) =====
-el('btnGerar').addEventListener('click',function(){
-D.observacoes=v('observacoes');
-if(EK==='COLE_AQUI'){executarGeracao();return;}
-if(decryptedKey){executarGeracao();return;}
-showPwModal(function(){executarGeracao();});
-});
-
-// ===== TRIGGER GERAR (editar existente) =====
-el('editGerar').addEventListener('click',function(){
-var orig=v('editResumoOriginal'),instr=v('editInstrucao');
-if(!orig||!instr){shake(this);return;}
-if(EK==='COLE_AQUI'){executarEdicao();return;}
-if(decryptedKey){executarEdicao();return;}
-showPwModal(function(){executarEdicao();});
-});
-
-// ===== COPY =====
+el('btnAccept').addEventListener('click',function(){el('revisionArea').style.display='none';el('finalActions').style.display='flex';el('feedback').textContent='Versão final aceita.';el('feedback').className='feedback fb-ok';el('resultLabel').textContent='Versão final';});
+el('btnSendRevision').addEventListener('click',function(){if(!decryptedKey){showPwModal(function(){enviarRevisao();});}else{enviarRevisao();}});
+el('btnGerar').addEventListener('click',function(){D.observacoes=v('observacoes');if(EK==='COLE_AQUI'){executarGeracao();return;}if(decryptedKey){executarGeracao();return;}showPwModal(function(){executarGeracao();});});
+el('editGerar').addEventListener('click',function(){var orig=v('editResumoOriginal'),instr=v('editInstrucao');if(!orig||!instr){shake(this);return;}if(EK==='COLE_AQUI'){executarEdicao();return;}if(decryptedKey){executarEdicao();return;}showPwModal(function(){executarEdicao();});});
 el('btnCopiar').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;navigator.clipboard.writeText(t).then(function(){el('feedback').textContent='Copiado!';el('feedback').className='feedback fb-ok';setTimeout(function(){el('feedback').textContent='';},2000);});});
 
-// ===== NOVA OCORRÊNCIA =====
+el('btnWhatsApp').addEventListener('click',function(){var t=el('resultado').textContent;if(!t)return;var url='https://wa.me/5514997337353?text='+encodeURIComponent(t);window.open(url,'_blank');});
+
 el('btnNovo').addEventListener('click',function(){
-D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',destino:'',destMerc:'',observacoes:''};
+D={forca:'',motivos:[],motivoDetalhe:'',km:'',rodovia:'',municipio:'',placa:'',mercs:[],drogas:[],cedulas:[],irregularidade:'',observacoes:''};
 ['km','rodovia','municipio','placa','observacoes','motivoDetalhe','editResumoOriginal','editInstrucao'].forEach(function(id){el(id).value='';});
 document.querySelectorAll('.option-btn.selected,.sub-opt.selected').forEach(function(b){b.classList.remove('selected');});
 el('subDrogas').classList.remove('open');el('cedulaForm').classList.remove('open');el('cedList').innerHTML='';
-el('motivoDetail').classList.remove('open');
-el('resultado').textContent='';el('feedback').textContent='';
-el('revisionText').value='';
-revisionNum=0;currentMode='new';
-goStep(0);
+el('motivoDetail').classList.remove('open');el('resultado').textContent='';el('feedback').textContent='';
+el('revisionText').value='';el('voicePreview').classList.remove('open');
+revisionNum=0;currentMode='new';goStep(0);
 });
 
-// ===== INIT =====
 goStep(0);
 </script>
-
 </body>
 </html>
