@@ -631,7 +631,7 @@ return parts.join('\n\n');
 }
 
 // GEMINI
-var GEMINI_FLASH='gemini-2.5-flash',GEMINI_PRO='gemini-2.5-pro';
+var GEMINI_FLASH='gemini-2.5-flash',GEMINI_PRO='gemini-2.5-pro',GEMINI_LITE='gemini-2.5-flash-lite',GEMINI_2F='gemini-2.0-flash';
 var GEMINI_BASE='https://generativelanguage.googleapis.com/v1beta/models/';
 
 async function callGeminiModel(model,prompt){
@@ -652,13 +652,14 @@ async function callGemini(prompt,statusCb){
 var attempts=[
 {model:GEMINI_FLASH,label:'Flash',wait:0},
 {model:GEMINI_PRO,label:'Pro (fallback)',wait:2000},
-{model:GEMINI_FLASH,label:'Flash (retry)',wait:2000}
+{model:GEMINI_LITE,label:'Flash-Lite (fallback)',wait:2000},
+{model:GEMINI_2F,label:'2.0 Flash (último recurso)',wait:2000}
 ];
 var lastErr;
 for(var i=0;i<attempts.length;i++){
 var a=attempts[i];
 if(a.wait)await sleep(a.wait);
-if(statusCb)statusCb('Tentativa '+(i+1)+'/3 — '+a.label+'...');
+if(statusCb)statusCb('Tentativa '+(i+1)+'/'+attempts.length+' — '+a.label+'...');
 try{return await callGeminiModel(a.model,prompt);}
 catch(e){lastErr=e;}
 }
