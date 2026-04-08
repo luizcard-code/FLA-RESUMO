@@ -648,20 +648,24 @@ return txt.trim();
 
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
+var MAX_RETRIES=2,RETRY_DELAY=3000;
 async function callGemini(prompt,statusCb){
 var attempts=[
 {model:GEMINI_FLASH,label:'Flash',wait:0},
-{model:GEMINI_PRO,label:'Pro (fallback)',wait:2000},
-{model:GEMINI_LITE,label:'Flash-Lite (fallback)',wait:2000},
-{model:GEMINI_3F,label:'3-Flash (último recurso)',wait:2000}
+{model:GEMINI_PRO,label:'Pro (fallback)',wait:3000},
+{model:GEMINI_LITE,label:'Flash-Lite (fallback)',wait:3000},
+{model:GEMINI_3F,label:'3-Flash (último recurso)',wait:3000}
 ];
 var lastErr;
 for(var i=0;i<attempts.length;i++){
 var a=attempts[i];
 if(a.wait)await sleep(a.wait);
-if(statusCb)statusCb('Tentativa '+(i+1)+'/'+attempts.length+' — '+a.label+'...');
+for(var t=1;t<=MAX_RETRIES;t++){
+var lbl=a.label+(t>1?' (tent. '+t+'/'+MAX_RETRIES+')':'');
+if(statusCb)statusCb('Modelo '+(i+1)+'/'+attempts.length+' — '+lbl+'...');
 try{return await callGeminiModel(a.model,prompt);}
-catch(e){lastErr=e;}
+catch(e){lastErr=e;if(t<MAX_RETRIES)await sleep(RETRY_DELAY);}
+}
 }
 throw lastErr;
 }
