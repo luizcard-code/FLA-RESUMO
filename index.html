@@ -631,7 +631,7 @@ return parts.join('\n\n');
 }
 
 // GEMINI
-var GEMINI_FLASH='gemini-2.5-flash',GEMINI_PRO='gemini-2.5-pro',GEMINI_LITE='gemini-2.5-flash-lite',GEMINI_2F='gemini-2.0-flash';
+var GEMINI_FLASH='gemini-2.5-flash',GEMINI_PRO='gemini-2.5-pro',GEMINI_LITE='gemini-2.5-flash-lite',GEMINI_3F='gemini-3-flash-preview';
 var GEMINI_BASE='https://generativelanguage.googleapis.com/v1beta/models/';
 
 async function callGeminiModel(model,prompt){
@@ -653,7 +653,7 @@ var attempts=[
 {model:GEMINI_FLASH,label:'Flash',wait:0},
 {model:GEMINI_PRO,label:'Pro (fallback)',wait:2000},
 {model:GEMINI_LITE,label:'Flash-Lite (fallback)',wait:2000},
-{model:GEMINI_2F,label:'2.0 Flash (último recurso)',wait:2000}
+{model:GEMINI_3F,label:'3-Flash (último recurso)',wait:2000}
 ];
 var lastErr;
 for(var i=0;i<attempts.length;i++){
