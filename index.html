@@ -539,7 +539,7 @@ prompt+='NÃO altere fatos, nomes, números, placas ou informações substantiva
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 if(Object.keys(ctx).length)prompt+='CONTEXTO DA OCORRÊNCIA:\n'+JSON.stringify(ctx,null,2)+'\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceText').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsert').textContent='Inserir revisado';el('btnVoiceReview').style.display='none';}
+try{var revised=await callGemini(prompt,function(s){fb.innerHTML='<span class="spinner"></span> '+s;});el('voiceText').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsert').textContent='Inserir revisado';el('btnVoiceReview').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
@@ -574,7 +574,7 @@ prompt+='Este texto é uma INSTRUÇÃO de retificação — mantenha o tom de in
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 if(ctx)prompt+='CONTEXTO (trecho do resumo original):\n'+ctx+'...\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceTextEdit').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertEdit').textContent='Inserir revisado';el('btnVoiceReviewEdit').style.display='none';}
+try{var revised=await callGemini(prompt,function(s){fb.innerHTML='<span class="spinner"></span> '+s;});el('voiceTextEdit').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertEdit').textContent='Inserir revisado';el('btnVoiceReviewEdit').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
@@ -631,16 +631,38 @@ return parts.join('\n\n');
 }
 
 // GEMINI
-async function callGemini(prompt){
-var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',{
+var GEMINI_FLASH='gemini-2.5-flash',GEMINI_PRO='gemini-2.5-pro';
+var GEMINI_BASE='https://generativelanguage.googleapis.com/v1beta/models/';
+
+async function callGeminiModel(model,prompt){
+var resp=await fetch(GEMINI_BASE+model+':generateContent',{
 method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':decryptedKey},
 body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.15}})
 });
-if(!resp.ok)throw new Error('HTTP '+resp.status);
+if(!resp.ok)throw new Error(model+' HTTP '+resp.status);
 var json=await resp.json();
 var txt=json&&json.candidates&&json.candidates[0]&&json.candidates[0].content&&json.candidates[0].content.parts&&json.candidates[0].content.parts[0]&&json.candidates[0].content.parts[0].text;
-if(!txt)throw new Error('Resposta vazia do Gemini');
+if(!txt)throw new Error(model+' resposta vazia');
 return txt.trim();
+}
+
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+async function callGemini(prompt,statusCb){
+var attempts=[
+{model:GEMINI_FLASH,label:'Flash',wait:0},
+{model:GEMINI_PRO,label:'Pro (fallback)',wait:2000},
+{model:GEMINI_FLASH,label:'Flash (retry)',wait:2000}
+];
+var lastErr;
+for(var i=0;i<attempts.length;i++){
+var a=attempts[i];
+if(a.wait)await sleep(a.wait);
+if(statusCb)statusCb('Tentativa '+(i+1)+'/3 — '+a.label+'...');
+try{return await callGeminiModel(a.model,prompt);}
+catch(e){lastErr=e;}
+}
+throw lastErr;
 }
 
 // RESULT + REVISION
@@ -692,7 +714,7 @@ showResult();var res=el('resultado'),fb=el('feedback'),sd=buildData();
 if(decryptedKey){
 res.textContent='';fb.innerHTML='<span class="spinner"></span> Gerando resumo com IA...';fb.className='feedback fb-loading';
 el('revisionArea').style.display='none';el('finalActions').style.display='none';
-try{var txt=await callGemini(buildMainPrompt(sd));showResultWithRevision(txt,true);}
+try{var txt=await callGemini(buildMainPrompt(sd),function(s){fb.innerHTML='<span class="spinner"></span> '+s;});showResultWithRevision(txt,true);}
 catch(err){showResultWithRevision(buildFallback(),false);fb.textContent='Erro: '+err.message+'. Resumo padrão exibido.';fb.className='feedback fb-err';}
 }else{showResultWithRevision(buildFallback(),false);}
 btn.disabled=false;
@@ -705,7 +727,7 @@ showResult();var res=el('resultado'),fb=el('feedback');
 if(decryptedKey){
 res.textContent='';fb.innerHTML='<span class="spinner"></span> Revisando com IA...';fb.className='feedback fb-loading';
 el('revisionArea').style.display='none';el('finalActions').style.display='none';
-try{var txt=await callGemini(buildRevisionPrompt(orig,instr));revisionNum=1;showResultWithRevision(txt,true);}
+try{var txt=await callGemini(buildRevisionPrompt(orig,instr),function(s){fb.innerHTML='<span class="spinner"></span> '+s;});revisionNum=1;showResultWithRevision(txt,true);}
 catch(err){res.textContent=orig;fb.textContent='Erro: '+err.message+'. Texto original mantido.';fb.className='feedback fb-err';el('revisionArea').style.display='block';el('finalActions').style.display='none';}
 }else{res.textContent=orig;fb.textContent='Sem IA disponível.';fb.className='feedback fb-err';el('revisionArea').style.display='block';el('finalActions').style.display='none';}
 btn.disabled=false;
@@ -741,7 +763,7 @@ prompt+='Este texto é uma INSTRUÇÃO de retificação — mantenha o tom de in
 prompt+='Retorne APENAS o texto revisado, sem explicações.\n\n';
 prompt+='CONTEXTO (trecho do resumo atual):\n'+ctx.resumo_atual+'\n\n';
 prompt+='TEXTO DITADO:\n'+txt;
-try{var revised=await callGemini(prompt);el('voiceTextRev').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertRev').textContent='Inserir revisado';el('btnVoiceReviewRev').style.display='none';}
+try{var revised=await callGemini(prompt,function(s){fb.innerHTML='<span class="spinner"></span> '+s;});el('voiceTextRev').value=revised;fb.textContent='Revisado pela IA. Confira e insira ou descarte.';fb.style.color='#16a34a';el('btnVoiceInsertRev').textContent='Inserir revisado';el('btnVoiceReviewRev').style.display='none';}
 catch(err){fb.textContent='Erro: '+err.message;fb.style.color='#dc2626';}
 btn.disabled=false;
 }
@@ -757,7 +779,7 @@ autoInsertRevVoice();
 var instrucao=v('revisionText');if(!instrucao){shake(el('btnSendRevision'));return;}
 var currentText=el('resultado').textContent;var btn=el('btnSendRevision');btn.disabled=true;
 var fb=el('feedback');fb.innerHTML='<span class="spinner"></span> Atualizando resumo...';fb.className='feedback fb-loading';
-try{var txt=await callGemini(buildRevisionPrompt(currentText,instrucao));revisionNum++;showResultWithRevision(txt,true);}
+try{var txt=await callGemini(buildRevisionPrompt(currentText,instrucao),function(s){fb.innerHTML='<span class="spinner"></span> '+s;});revisionNum++;showResultWithRevision(txt,true);}
 catch(err){fb.textContent='Erro na revisão: '+err.message;fb.className='feedback fb-err';}
 btn.disabled=false;
 }
